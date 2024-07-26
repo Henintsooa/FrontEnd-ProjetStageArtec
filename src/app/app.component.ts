@@ -3,12 +3,12 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderAsideComponent } from './header-aside/header-aside.component';
 import { HeaderClientComponent } from './header-client/header-client.component';
 import { InscriptionClientComponent } from './inscription-client/inscription-client.component';
+import { ConnexionComponent } from './connexion/connexion.component';
 import { CommonModule } from '@angular/common';
-
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule,RouterOutlet,HeaderAsideComponent,HeaderClientComponent,InscriptionClientComponent],
+  imports: [CommonModule,RouterOutlet,HeaderAsideComponent,HeaderClientComponent,InscriptionClientComponent,ConnexionComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })

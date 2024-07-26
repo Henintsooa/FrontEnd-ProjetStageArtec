@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
-import { HeaderAsideComponent } from './header-aside/header-aside.component';
-
+import { ConnexionComponent } from './connexion/connexion.component';
+import { InscriptionClientComponent } from './inscription-client/inscription-client.component';
 export const routes: Routes = [
-  { path: 'header-aside', component: HeaderAsideComponent },
-  // Ajoutez d'autres routes si nécessaire
+  { path: '', redirectTo: '/login', pathMatch:'full' },
+  { path: 'login', component: ConnexionComponent },
+  { path: 'inscription', component: InscriptionClientComponent }
 ];

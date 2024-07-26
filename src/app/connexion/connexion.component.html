@@ -1,0 +1,91 @@
+<section class="min-vh-100 mb-8">
+  <div class="page-header align-items-start min-vh-50 pt-5 pb-11 m-3 border-radius-lg" style="background-image: url('assets/img/curved-images/artecBackground.jpg');">
+    <span class="mask bg-gradient-primary opacity-100"></span>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-5 text-center mx-auto">
+          <h1 class="text-white mb-2 mt-5">Bienvenue</h1>
+          <p class="text-lead text-white"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row mt-lg-n10 mt-md-n11 mt-n10">
+      <div class="col-xl-4 col-lg-5 col-md-7 mx-auto">
+        <div class="card z-index-0">
+          <div class="card-header text-center pt-4">
+            <h4 class="mb-2">Connexion</h4>
+          </div>
+          <p class="text-center">Connectez-vous avec vos identifiants</p>
+          <div class="card-body mb-3">
+            <!-- Afficher le message d'erreur -->
+            <div *ngIf="errorMessage" class="alert alert-warning fs6" style="color: white;">
+              {{ errorMessage }}
+            </div>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+              <div class="mb-3">
+                <input formControlName="email" type="email" class="form-control" placeholder="Email" aria-label="Email">
+              </div>
+              <div class="mb-3 position-relative">
+                <input
+                  formControlName="password"
+                  [type]="showPassword ? 'text' : 'password'"
+                  class="form-control"
+                  placeholder="Mot de passe"
+                  aria-label="Password">
+                <button type="button" class="btn btn-outline-secondary border-0 position-absolute top-50 end-0 translate-middle-y" (click)="togglePassword()">
+                  <i [class]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+                </button>
+              </div>
+              <p class="text-sm mb-2">
+                <a style="color: red;" href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Mot de passe oublié ?</a>
+              </p>
+              <div class="text-center mb-4">
+                <button type="submit" class="btn bg-gradient-primary w-100 my-4 mb-2">Se Connecter</button>
+              </div>
+            </form>
+            <div class="text-center mt-3">
+              <p class="text-sm">
+                Pas encore de compte ? <a class="text-primary font-weight-bolder" [routerLink]="['/inscription']">S'inscrire</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="footer py-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-8 mx-auto text-center mt-1">
+            <p class="mb-0 text-secondary">
+              Copyright © <script>
+                document.write(new Date().getFullYear())
+              </script> Artec.
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</section>
+<!-- Modal pour la demande de réinitialisation du mot de passe -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="forgotPasswordModalLabel">Réinitialiser le mot de passe</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordSubmit()">
+          <div class="mb-3">
+            <label for="forgotEmail" class="form-label">Entrez votre adresse email</label>
+            <input formControlName="email" type="email" class="form-control" id="forgotEmail" placeholder="Email">
+          </div>
+          <button type="submit" class="btn btn-primary">Envoyer le lien de réinitialisation</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
