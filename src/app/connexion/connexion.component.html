@@ -15,12 +15,12 @@
       <div class="col-xl-4 col-lg-5 col-md-7 mx-auto">
         <div class="card z-index-0">
           <div class="card-header text-center pt-4">
-            <h4 class="mb-2">Connexion</h4>
+            <h5 class="mb-2">Connexion</h5>
           </div>
-          <p class="text-center">Connectez-vous avec vos identifiants</p>
+          <p class="text-center fs-10">Connectez-vous avec vos identifiants</p>
           <div class="card-body mb-3">
             <!-- Afficher le message d'erreur -->
-            <div *ngIf="errorMessage" class="alert alert-warning fs6" style="color: white;">
+            <div *ngIf="errorMessage" class="alert alert-warning">
               {{ errorMessage }}
             </div>
             <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -78,6 +78,14 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <!-- Afficher le message de réussite -->
+        <div *ngIf="success" class="alert alert-success">
+          {{ success }}
+        </div>
+        <!-- Afficher le message d'erreur -->
+        <div *ngIf="error" class="alert alert-warning">
+          {{ error }}
+        </div>
         <form [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordSubmit()">
           <div class="mb-3">
             <label for="forgotEmail" class="form-label">Entrez votre adresse email</label>

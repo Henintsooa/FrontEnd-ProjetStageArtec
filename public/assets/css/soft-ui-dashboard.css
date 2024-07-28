@@ -5846,17 +5846,21 @@ fieldset:disabled .btn {
 }
 
 .alert-success {
-  color: #345609;
+  font-size: 14px !important;
+  color: white;
   background-color: #e6f7d0;
   border-color: #daf3b9;
 }
 
 .alert-success .alert-link {
+  font-size: 14px !important;
+  color: white;
   color: #2a4507;
 }
 
 .alert-info {
-  color: #0e748b;
+  font-size: 14px !important;
+  color: white;
   background-color: #d1f3fa;
   border-color: #b9ecf8;
 }
@@ -5866,7 +5870,8 @@ fieldset:disabled .btn {
 }
 
 .alert-warning {
-  color: #645314;
+  font-size: 14px !important;
+  color: white;
   background-color: #fef5d6;
   border-color: #fef1c2;
 }
@@ -5876,7 +5881,8 @@ fieldset:disabled .btn {
 }
 
 .alert-danger {
-  color: #8c0404;
+  font-size: 14px !important;
+  color: white;
   background-color: #fbcdcd;
   border-color: #f9b4b4;
 }

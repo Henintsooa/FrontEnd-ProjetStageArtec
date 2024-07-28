@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
 import { AuthResponse } from '../models/auth-response.model';
 
 @Injectable({
@@ -15,11 +15,20 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password });
   }
 
-  sendPasswordResetLink(email: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/sendPasswordResetLink`, { email });
+  sendPasswordResetLink(email: string): Observable<HttpResponse<any>> {
+    return this.http.post<any>(`${this.apiUrl}/sendPasswordResetLink`, { email }, { observe: 'response' });
   }
 
-  resetPassword(token: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/resetPassword`, { token, password });
+  resetPassword(email: string, token: string, password: string, password_confirmation: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/resetPassword`, {
+      email,
+      resetToken: token,
+      password,
+      password_confirmation
+    }).pipe(
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
   }
 }

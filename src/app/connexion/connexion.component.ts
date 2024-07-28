@@ -17,6 +17,8 @@ export class ConnexionComponent {
   loginForm: FormGroup;
   showPassword = false;
   errorMessage: string | null = null; // Propriété pour les messages d'erreur
+  error: string | null = null;
+  success: string | null = null;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.loginForm = this.fb.group({
@@ -63,22 +65,28 @@ export class ConnexionComponent {
   ngOnInit(): void {}
 
   onForgotPasswordSubmit(): void {
+    this.success = '';
+    this.error= '';
+
     if (this.forgotPasswordForm.valid) {
       const email = this.forgotPasswordForm.value.email;
       this.authService.sendPasswordResetLink(email).subscribe(
         response => {
+          console.log('Réponse reçue :', response);
           if (response.status === 200) {
-            // Stocker le token et rediriger l'utilisateur
-            localStorage.setItem('token', response.token);
-            console.log( response);
-            this.router.navigate(['/connexion']);
+            this.success = response.body?.message ||'Un lien de réinitialisation a été envoyé à votre adresse email. Veuillez consulter votre boîte de reception.';
           } else {
-            // Utiliser le message d'erreur retourné par la réponse
-            this.errorMessage = response.message;
-            console.log('Erreur', response);
+            this.error= response.body?.error;
           }
+        },
+        error => {
+          // Utiliser le message d'erreur retourné par le serveur
+          this.error= error.error?.error || 'Une erreur est survenue. Veuillez réessayer plus tard.';
         }
       );
+    } else {
+      this.error= 'Veuillez entrer une adresse email valide.';
     }
   }
+
 }
