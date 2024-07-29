@@ -1,6 +1,6 @@
 <section class="min-vh-100 mb-8">
   <div class="page-header align-items-start min-vh-50 pt-5 pb-11 m-3 border-radius-lg" style="background-image: url('assets/img/curved-images/artecBackground.jpg');">
-    <span class="mask bg-gradient-primary opacity-100"></span>
+    <span class="mask bg-gradient-primary opacity-0.5"></span>
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-5 text-center mx-auto">
@@ -25,9 +25,11 @@
             </div>
             <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
               <div class="mb-3">
+                <!-- <label for="email" class="form-label">Email </label> -->
                 <input formControlName="email" type="email" class="form-control" placeholder="Email" aria-label="Email">
               </div>
               <div class="mb-3 position-relative">
+                <!-- <label for="password" class="form-label">Mot de passe </label> -->
                 <input
                   formControlName="password"
                   [type]="showPassword ? 'text' : 'password'"
