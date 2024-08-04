@@ -1,0 +1,77 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+    <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
+    <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Formulaires</li>
+  </ol>
+  <h6 class="font-weight-bolder mb-0">Liste des Formulaires</h6>
+</nav>
+<div class="row mb-4 d-flex justify-content-end">
+  <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+    <a href="/admin/nouveauFormulaire" class="text-decoration-none">
+      <div class="card bg-white text-center">
+        <div class="card-body p-3 d-flex align-items-center justify-content-between">
+          <p class="font-weight-bolder mb-0 text-primary text-sm">
+            Nouveau Formulaire
+          </p>
+          <div class="card align-items-center justify-content-center bg-primary" style="width: 35px; height: 35px;">
+            <i class="fa fa-plus text-white" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">
+        <h6 class="text-white">Formulaires</h6>
+      </div>
+      <div class="card-body px-0 pt-0 pb-2">
+        <div class="table-responsive p-0">
+          <table class="table align-items-center mb-0">
+            <thead>
+              <tr>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7" style="width: 30%;">Nom</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width: 50%;">Description</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width: 50%;">Dernière modification</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let formulaire of typeFormulaires">
+                <td>
+                  <div class="d-flex px-2 py-1">
+                    <div class="d-flex flex-column justify-content-center">
+                      <a [routerLink]="['/admin/formulaires', formulaire.idtypeformulaire]" class="text-sm font-weight-bold mb-0 text-wrap">{{ formulaire.nomtypeformulaire }}</a>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <a [routerLink]="['/admin/formulaires', formulaire.idtypeformulaire]" class="text-sm font-weight-bold mb-0 text-wrap">{{ formulaire.descriptiontypeformulaire }}</a>
+                </td>
+                <td>
+                  <a [routerLink]="['/admin/formulaires', formulaire.idtypeformulaire]" class="text-sm font-weight-bold mb-0 text-wrap">{{ formulaire.datecreationformulaire }}</a>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <a [routerLink]="['/admin/formulaires/edit', formulaire.idtypeformulaire]" class="text-sm text-primary me-3">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="" class="text-sm text-danger">
+                      <i class="fas fa-trash"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="typeFormulaires.length === 0">
+                <td colspan="4" class="text-center text-sm">Aucun formulaire disponible.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

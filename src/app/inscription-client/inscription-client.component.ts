@@ -37,12 +37,12 @@ export class InscriptionClientComponent {
         ]
       ],
       password_confirmation: ['', [Validators.required, Validators.minLength(8)]],
-      nom: ['', Validators.required],
-      emailOperateur: ['', [Validators.required, Validators.email]],
-      adresse: ['', Validators.required],
-      idville: ['', [Validators.required, Validators.pattern(/^[1-9]\d*$/)]],
-      telephone: ['', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)]],
-      telecopie: ['']
+      nom: ['', Validators.required]
+      // emailOperateur: ['', [Validators.required, Validators.email]],
+      // adresse: ['', Validators.required],
+      // idville: ['', [Validators.required, Validators.pattern(/^[1-9]\d*$/)]],
+      // telephone: ['', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)]],
+      // telecopie: ['']
     }, { validators: this.confirmPasswordValidator });
   }
 
@@ -77,34 +77,34 @@ export class InscriptionClientComponent {
       ? null : { 'mismatch': true };
   }
 
-  nextStep(): void {
-    if (this.currentStep === 1) {
-      if (this.registrationForm.controls['name'].invalid || this.registrationForm.controls['email'].invalid || this.registrationForm.controls['password'].invalid || this.registrationForm.controls['password_confirmation'].invalid) {
-        this.errors = [];
-        if (this.registrationForm.controls['name'].invalid) {
-          this.errors.push('Le champ nom est obligatoire.');
-        }
-        if (this.registrationForm.controls['email'].invalid) {
-          this.errors.push('Veuillez entrer une adresse email valide.');
-        }
-        if (this.registrationForm.controls['password'].invalid) {
-          this.errors.push('Le mot de passe doit comporter au moins 8 caractères et inclure une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.');
-        }
-        if (this.registrationForm.controls['password_confirmation'].invalid) {
-          this.errors.push('Le champ de confirmation du mot de passe est obligatoire.');
-        }
-        return;
-      }
-      this.errors = [];
-      this.currentStep = 2;
-    }
-  }
+  // nextStep(): void {
+  //   if (this.currentStep === 1) {
+  //     if (this.registrationForm.controls['name'].invalid || this.registrationForm.controls['email'].invalid || this.registrationForm.controls['password'].invalid || this.registrationForm.controls['password_confirmation'].invalid) {
+  //       this.errors = [];
+  //       if (this.registrationForm.controls['name'].invalid) {
+  //         this.errors.push('Le champ nom est obligatoire.');
+  //       }
+  //       if (this.registrationForm.controls['email'].invalid) {
+  //         this.errors.push('Veuillez entrer une adresse email valide.');
+  //       }
+  //       if (this.registrationForm.controls['password'].invalid) {
+  //         this.errors.push('Le mot de passe doit comporter au moins 8 caractères et inclure une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.');
+  //       }
+  //       if (this.registrationForm.controls['password_confirmation'].invalid) {
+  //         this.errors.push('Le champ de confirmation du mot de passe est obligatoire.');
+  //       }
+  //       return;
+  //     }
+  //     this.errors = [];
+  //     this.currentStep = 2;
+  //   }
+  // }
 
-  prevStep(): void {
-    if (this.currentStep === 2) {
-      this.currentStep = 1;
-    }
-  }
+  // prevStep(): void {
+  //   if (this.currentStep === 2) {
+  //     this.currentStep = 1;
+  //   }
+  // }
 
   togglePassword(): void {
     this.showPassword = !this.showPassword; // Bascule la visibilité du mot de passe
@@ -119,7 +119,7 @@ export class InscriptionClientComponent {
           this.error = ''; // Réinitialiser les erreurs
           this.errors = []; // Réinitialiser les erreurs du formulaire
           this.registrationForm.reset(); // Réinitialiser le formulaire si nécessaire
-          this.router.navigate(['/inscription']);
+          // this.router.navigate(['/login']);
         },
         error: (error: { error: { message: string; }; }) => {
           console.error('API Error:', error);

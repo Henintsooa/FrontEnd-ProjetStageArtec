@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HeaderAsideComponent } from './header-aside/header-aside.component';
 import { HeaderClientComponent } from './header-client/header-client.component';
 import { InscriptionClientComponent } from './inscription-client/inscription-client.component';
 import { ConnexionComponent } from './connexion/connexion.component';
@@ -9,7 +8,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule,RouterOutlet,HeaderAsideComponent,HeaderClientComponent,InscriptionClientComponent,ConnexionComponent,ResetPasswordComponent],
+  imports: [CommonModule,RouterOutlet,HeaderClientComponent,InscriptionClientComponent,ConnexionComponent,ResetPasswordComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })

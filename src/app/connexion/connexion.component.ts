@@ -38,29 +38,34 @@ export class ConnexionComponent {
   onSubmit(): void {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-      this.authService.login(email, password).subscribe(
-        response => {
+      this.authService.login(email, password).subscribe({
+        next: response => {
           if (response.status === 200) {
             // Stocker le token et rediriger l'utilisateur
             localStorage.setItem('token', response.token);
             console.log('Connexion réussie', response);
-            this.router.navigate(['/inscription']);
+            if (response.role === 'admin') {
+              this.router.navigate(['/admin/dashboard']); // Redirection pour les administrateurs
+            } else if (response.role === 'user') {
+              this.router.navigate(['/inscription']); // Redirection pour les utilisateurs
+            }
           } else {
-            // Utiliser le message d'erreur retourné par la réponse
+            // Message d'erreur en cas de statut non 200
             this.errorMessage = response.message || 'Erreur lors de la connexion, veuillez réessayer.';
             console.log('Erreur', response);
           }
         },
-        error => {
-          // Utiliser le message d'erreur retourné par le serveur
-          this.errorMessage = error.error?.message || 'Erreur lors de la connexion, veuillez réessayer plus tard.';
-          console.error('Erreur lors de la connexion', error);
+        error: err => {
+          // Message d'erreur en cas d'échec de la requête
+          this.errorMessage = err.error?.message || 'Erreur lors de la connexion, veuillez réessayer plus tard.';
+          console.error('Erreur lors de la connexion', err);
         }
-      );
+      });
     } else {
       this.errorMessage = 'Veuillez remplir tous les champs correctement.';
     }
   }
+
 
   ngOnInit(): void {}
 
