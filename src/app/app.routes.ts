@@ -7,6 +7,7 @@ import { FormulairesComponent } from './admin-formulaires/formulaires.component'
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { FormulaireDetailsComponent } from './admin-formulaireDetails/formulaire-details.component';
 import { NouveauFormulaireComponent } from './admin-nouveauFormulaire/formulaire-nouveau.component';
+import { ModifierFormulaireComponent } from './admin-modifier-formulaire/admin-modifier-formulaire.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch:'full' },
@@ -21,7 +22,8 @@ export const routes: Routes = [
       { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'formulaire', component: FormulairesComponent },
       { path: 'formulaires/:idtypeformulaire', component: FormulaireDetailsComponent },
-      { path: 'nouveauFormulaire', component: NouveauFormulaireComponent }
+      { path: 'nouveauFormulaire', component: NouveauFormulaireComponent },
+      { path: 'editFormulaire/:id', component: ModifierFormulaireComponent }
 
     ]
   }

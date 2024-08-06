@@ -51,6 +51,7 @@ export class NouveauFormulaireComponent implements OnInit {
   getQuestions(categoryGroup: AbstractControl): FormArray {
     return categoryGroup.get('questions') as FormArray;
   }
+
   getQuestionsArray(categoryGroup: AbstractControl): any[] {
     const formArray = categoryGroup.get('questions') as FormArray;
     return formArray ? formArray.controls : [];
@@ -102,6 +103,7 @@ export class NouveauFormulaireComponent implements OnInit {
         date_creation: new Date().toISOString().split('T')[0],
         questions: questions
       };
+
       console.log('Payload:', payload);
       this.formulaireService.addFormulaire(payload).subscribe({
         next: (response: any) => {

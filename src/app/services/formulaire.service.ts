@@ -33,4 +33,16 @@ export class FormulaireService {
   addFormulaire(formData: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/addFormulaire`, formData);
   }
+
+  supprimerFormulaire(idFormulaire: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/formulaires/${idFormulaire}`);
+  }
+
+  getFormulaireById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/formulaires/${id}`);
+  }
+
+  modifierFormulaire(idTypeFormulaire: number, formulaireData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/editFormulaire/${idTypeFormulaire}`, formulaireData);
+  }
 }

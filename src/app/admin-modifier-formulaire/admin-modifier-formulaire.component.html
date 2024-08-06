@@ -2,9 +2,9 @@
   <nav aria-label="breadcrumb" class="mb-5">
     <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
       <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages / Formulaires</a></li>
-      <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Nouveau Formulaire</li>
+      <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Modifier Formulaire</li>
     </ol>
-    <h6 class="font-weight-bolder mb-0">Créer un Nouveau Formulaire</h6>
+    <h6 class="font-weight-bolder mb-0">Modifier le Formulaire</h6>
   </nav>
 
   <div class="row mb-4">
@@ -33,7 +33,6 @@
       </div>
     </div>
   </div>
-
   <!-- Modal -->
   <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true" [ngClass]="{'show': showModal}" [style.display]="showModal ? 'block' : 'none'">
     <div class="modal-dialog modal-dialog-centered">
@@ -55,7 +54,7 @@
     <div class="col-md-12">
       <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-          <h6 class="text-white">Nouveau Formulaire</h6>
+          <h6 class="text-white">Modifier le Formulaire</h6>
         </div>
         <div class="card-body">
           <div *ngIf="success" class="alert alert-success">
@@ -64,7 +63,7 @@
           <div *ngIf="error" class="alert alert-warning">
             {{ error }}
           </div>
-          <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+          <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="type" class="form-label">Type formulaire<span class="text-danger">*</span></label>
@@ -81,49 +80,46 @@
                 <input formControlName="description" id="desc" type="text" class="form-control" placeholder="Description du formulaire" required>
               </div>
             </div>
-
             <div class="mb-3">
               <h6 class="text-primary">Questions</h6>
             </div>
-            <div class="mb-3" formArrayName="questions">
-              <div *ngFor="let categoryGroup of questions.controls; let i = index" [formGroupName]="i" class="mb-4">
-                <div *ngFor="let category of categoriesQuestions" [hidden]="category.idcategoriequestion !== categoryGroup.value.categoryId">
-                  <div class="mb-3">
-                    <h6>{{ category.nom }}</h6>
-                  </div>
-                  <div formArrayName="questions">
-                    <div *ngFor="let question of getQuestionsArray(categoryGroup); let j = index" [formGroupName]="j" class="mb-3">
-                      <div class="row">
-                        <div class="col-md-6">
-                          <label for="questionText{{i}}{{j}}" class="form-label">Question</label>
-                          <input type="text" class="form-control mb-2" formControlName="text" placeholder="Question">
-                          <div class="form-check mb-3">
-                            <input type="checkbox" class="form-check-input" formControlName="obligatoire" id="questionObligatoire{{i}}{{j}}">
-                            <label for="questionObligatoire{{i}}{{j}}" class="form-check-label">Obligatoire</label>
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                          <label for="questionType{{i}}{{j}}" class="form-label">Type de réponse</label>
-                          <select class="form-select mb-2" formControlName="type">
-                            <option *ngFor="let type of typeQuestions" [value]="type.idtypequestion">{{ type.nom }}</option>
-                          </select>
-
+            <div formArrayName="questions">
+              <div *ngFor="let category of questions.controls; let cIndex = index" [formGroupName]="cIndex">
+                <h6>{{ category.get('categorie')?.value }}</h6>
+                <div formArrayName="questions">
+                  <div *ngFor="let question of getQuestionsFormArray(category).controls; let qIndex = index" [formGroupName]="qIndex" class="mb-3">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label for="questionText{{cIndex}}-{{qIndex}}" class="form-label">Question</label>
+                        <input id="questionText{{cIndex}}-{{qIndex}}" type="text" class="form-control mb-2" formControlName="text" placeholder="Question">
+                        <div class="form-check mb-3">
+                          <input type="checkbox" class="form-check-input" formControlName="obligatoire" id="questionObligatoire{{cIndex}}-{{qIndex}}">
+                          <label for="questionObligatoire{{cIndex}}-{{qIndex}}" class="form-check-label">Obligatoire</label>
                         </div>
                       </div>
-                      <button type="button" class="btn btn-danger btn-sm" (click)="removeQuestion(category.idcategoriequestion, j)">Supprimer</button>
+                      <div class="col-md-6">
+                        <label for="questionType{{cIndex}}-{{qIndex}}" class="form-label">Type de réponse</label>
+                        <select class="form-select mb-2" formControlName="type">
+                          <option *ngFor="let type of typeQuestions" [value]="type.idtypequestion">{{ type.nom }}</option>
+                        </select>
+                      </div>
+                      <input type="hidden" formControlName="categorie_id">
+                      <div class="col-12">
+                        <button type="button" class="btn btn-danger btn-sm" (click)="removeQuestion(cIndex, qIndex)">Supprimer</button>
+                      </div>
                     </div>
-                    <button type="button" class="btn btn-success btn-sm mt-2" (click)="addQuestion(category.idcategoriequestion)">Ajouter une question</button>
                   </div>
                 </div>
+                <button type="button" class="btn btn-success btn-sm mt-2" (click)="addQuestion(cIndex)">Ajouter une question</button>
               </div>
             </div>
 
 
-
             <div class="d-flex justify-content-end">
-              <button type="submit" class="btn btn-primary">Créer formulaire</button>
+              <button type="submit" class="btn btn-primary">Modifier le formulaire</button>
             </div>
           </form>
+
 
         </div>
       </div>
