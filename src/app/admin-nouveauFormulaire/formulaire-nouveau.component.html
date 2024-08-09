@@ -7,6 +7,13 @@
     <h6 class="font-weight-bolder mb-0">Créer un Nouveau Formulaire</h6>
   </nav>
 
+  <!-- Lien de retour -->
+  <div class="mb-4">
+    <a [routerLink]="['/admin/formulaire']" class="btn btn-secondary">
+      <i class="fas fa-arrow-left"></i> Retour
+    </a>
+  </div>
+
   <div class="row mb-4">
     <div class="col-md-12">
       <div class="card shadow-sm">
@@ -64,6 +71,12 @@
           <div *ngIf="error" class="alert alert-warning">
             {{ error }}
           </div>
+          <div *ngIf="errors && errors.length" class="alert alert-warning">
+              <ul>
+                  <li *ngFor="let err of errors">{{ err }}</li>
+              </ul>
+          </div>
+
           <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
             <div class="row mb-3">
               <div class="col-md-6">

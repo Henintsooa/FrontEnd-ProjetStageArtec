@@ -3,11 +3,12 @@ import { FormBuilder, FormGroup, FormArray, Validators, AbstractControl } from '
 import { FormulaireService } from '../services/formulaire.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-formulaire-nouveau',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule,RouterModule],
   templateUrl: './formulaire-nouveau.component.html'
 })
 export class NouveauFormulaireComponent implements OnInit {
@@ -89,6 +90,7 @@ export class NouveauFormulaireComponent implements OnInit {
     if (this.registrationForm.valid) {
       const formValue = this.registrationForm.value;
 
+      // Préparer les données du formulaire
       const questions = formValue.questions.flatMap((category: any) =>
         category.questions.map((question: any) => ({
           ...question,
@@ -104,29 +106,50 @@ export class NouveauFormulaireComponent implements OnInit {
         questions: questions
       };
 
-      console.log('Payload:', payload);
       this.formulaireService.addFormulaire(payload).subscribe({
         next: (response: any) => {
-          this.success = 'Formulaire créé avec succès!';
-          this.error = '';
+          // Afficher le message de succès et réinitialiser le formulaire
+          this.success = response.message;
           this.errors = [];
           this.registrationForm.reset();
         },
-        error: (error: { error: { message: string; details: string; }; }) => {
-          console.error('API Error:', error);
-          this.error = error.error.message || 'Erreur lors de la création du formulaire.';
+        error: (error: any) => {
+          if (error.status === 422) {
+            // Gestion des erreurs de validation
+            if (error.error.details && typeof error.error.details === 'object') {
+              this.errors = [];
+              for (let key in error.error.details) {
+                if (error.error.details.hasOwnProperty(key)) {
+                  this.errors.push(error.error.details[key]);
+                }
+              }
+            } else {
+              this.error = 'Erreur de validation sans détails supplémentaires.';
+            }
+          } else if (error.status === 500) {
+            // Gestion des erreurs du serveur
+            this.error = error.error.message || 'Erreur lors de la création du formulaire.';
+          } else {
+            // Gestion des autres erreurs
+            this.error = 'Une erreur inconnue s\'est produite.';
+          }
         }
       });
     } else {
+      // Gestion des erreurs de validation du formulaire
       this.errors = [];
       Object.keys(this.registrationForm.controls).forEach(key => {
         const control = this.registrationForm.get(key);
         if (control?.invalid) {
-          this.errors.push(`${key} is invalid.`);
+          this.errors.push(`${key} est obligatoire .`);
         }
       });
     }
   }
+
+
+
+
 
   closeModal(): void {
     this.showModal = false;

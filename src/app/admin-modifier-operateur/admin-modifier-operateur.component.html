@@ -1,0 +1,73 @@
+<div class="container mt-4">
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
+      <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
+      <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Opérateur Cible</li>
+    </ol>
+    <h6 class="font-weight-bolder mb-0">Modifier un Opérateur</h6>
+  </nav>
+
+    <!-- Lien de retour -->
+  <div class="mb-4">
+    <a [routerLink]="['/admin/operateurCibles']" class="btn btn-secondary">
+      <i class="fas fa-arrow-left"></i> Retour
+    </a>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h6 class="text-white">Formulaire de Modification</h6>
+        </div>
+        <div class="card-body">
+          <!-- Success and error messages -->
+          <div *ngIf="successMessage" class="alert alert-success">
+            {{ successMessage }}
+          </div>
+          <div *ngIf="errorMessage" class="alert alert-warning">
+            {{ errorMessage }}
+          </div>
+          <!-- Form -->
+          <form [formGroup]="operateurForm" (ngSubmit)="onSubmit()">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="nom" class="form-label">Nom</label>
+                <input id="nom" formControlName="nom" class="form-control" />
+                <div *ngIf="operateurForm.get('nom')?.invalid && (operateurForm.get('nom')?.dirty || operateurForm.get('nom')?.touched)" class="text-danger mt-1">
+                  <div *ngIf="operateurForm.get('nom')?.errors?.['required']"><small>Le nom est requis.</small></div>
+                  <div *ngIf="operateurForm.get('nom')?.errors?.['maxlength']"><small>Le nom ne peut pas dépasser 200 caractères.</small></div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="email" class="form-label">Email</label>
+                <input id="email" formControlName="email" class="form-control" />
+                <div *ngIf="operateurForm.get('email')?.invalid && (operateurForm.get('email')?.dirty || operateurForm.get('email')?.touched)" class="text-danger mt-1">
+                  <div *ngIf="operateurForm.get('email')?.errors?.['required']"><small>L'email est requis.</small></div>
+                  <div *ngIf="operateurForm.get('email')?.errors?.['email']"><small>L'email doit être valide.</small></div>
+                  <div *ngIf="operateurForm.get('email')?.errors?.['maxlength']"><small>L'email ne peut pas dépasser 200 caractères.</small></div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="idville" class="form-label">Ville</label>
+                <select formControlName="idVille" id="idville" class="form-select">
+                  <option value="" disabled>Choisissez une ville</option>
+                  <option *ngFor="let ville of villes" [value]="ville.idville">{{ ville.nom }}</option>
+                </select>
+                <div *ngIf="operateurForm.get('idVille')?.invalid && (operateurForm.get('idVille')?.touched)" class="text-danger mt-1">
+                  <small>Le champ ville est obligatoire.</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary">Mettre à jour</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

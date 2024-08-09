@@ -16,7 +16,7 @@ export class ConnexionComponent {
   forgotPasswordForm: FormGroup;
   loginForm: FormGroup;
   showPassword = false;
-  errorMessage: string | null = null; // Propriété pour les messages d'erreur
+  errorMessage: string | null = null;
   error: string | null = null;
   success: string | null = null;
 
