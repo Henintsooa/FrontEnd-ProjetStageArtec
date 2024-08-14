@@ -12,6 +12,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { AdminOperateurCiblesComponent } from './admin-operateur-cibles/admin-operateur-cibles.component';
 import { AdminNouvelOperateurComponent } from './admin-nouvel-operateur/admin-nouvel-operateur.component';
 import { AdminModifierOperateurComponent } from './admin-modifier-operateur/admin-modifier-operateur.component';
+import { AdminConvertirOperateurComponent } from './admin-convertir-operateur/admin-convertir-operateur.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch:'full' },
@@ -33,6 +34,7 @@ export const routes: Routes = [
       { path: 'operateurCibles', component: AdminOperateurCiblesComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
       { path: 'nouvelOperateur', component: AdminNouvelOperateurComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
       { path: 'editOperateurCible/:id', component: AdminModifierOperateurComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+      { path: 'convertirOperateur', component: AdminConvertirOperateurComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
 
     ]
   }

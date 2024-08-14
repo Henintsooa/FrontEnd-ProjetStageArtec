@@ -1,0 +1,62 @@
+<section class="min-vh-100 mb-8">
+  <div class="container">
+
+    <div class="mb-4">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+          <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
+          <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Sensibiliser</li>
+        </ol>
+        <h6 class="font-weight-bolder mb-0">Liste des Opérateurs à Sensibiliser</h6>
+      </nav>
+    </div>
+
+    <div class="mb-4">
+      <a [routerLink]="['/admin/operateurCibles']" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Retour
+      </a>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-4">
+          <div class="card-header bg-primary text-white">
+            <h6 class="text-white">Liste opérateur</h6>
+            <button class="btn btn-warning ms-auto" (click)="sendSensibilisationEmail()">Envoyer Email de Sensibilisation</button>
+          </div>
+          <div class="card-body px-0 pt-0 pb-2">
+            <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+            <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th>
+                      <input type="checkbox" (change)="toggleSelectAll()" [checked]="selectAllOperateurs">
+                    </th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Nom</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Email</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Ville</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let operateur of operateurs">
+                    <td>
+                      <input type="checkbox" (change)="toggleSelectOperateur(operateur)" [checked]="selectedOperateurs.includes(operateur)">
+                    </td>
+                    <td class="ps-4 text-sm">{{ operateur.nom }}</td>
+                    <td class="text-sm">{{ operateur.email }}</td>
+                    <td class="text-sm">{{ operateur.ville }}</td>
+                  </tr>
+                  <tr *ngIf="operateurs.length === 0">
+                    <td colspan="4" class="text-center text-sm">Aucun opérateur disponible.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

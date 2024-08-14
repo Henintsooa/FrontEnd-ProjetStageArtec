@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -11,8 +11,12 @@ export class SensibilisationService {
 
   constructor(private http: HttpClient) { }
 
-  getOperateurs(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/operateurCibles`);
+  getOperateurs(params?: any): Observable<any> {
+    let httpParams = new HttpParams();
+    if (params?.keyword) {
+      httpParams = httpParams.set('keyword', params.keyword);
+    }
+    return this.http.get<any>(`${this.apiUrl}/operateurCibles`, { params: httpParams });
   }
 
   deleteOperateur(id: number): Observable<any> {
@@ -29,5 +33,21 @@ export class SensibilisationService {
 
   getOperateurCibleById(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/operateurCibleById/${id}`);
+  }
+
+  sendSensibilisationEmail(operator: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/sendEmailSensibilisation`, operator);
+  }
+
+  convertirOperateur(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/convertirOperateur`, data);
+  }
+
+  getAvailableOperateurs(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/getOperateurs`);
+  }
+
+  getOperateurCibles(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/getOperateurCibles`);
   }
 }

@@ -1,0 +1,94 @@
+<div class="container mt-4">
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
+      <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
+      <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Convertir Opérateur</li>
+    </ol>
+    <h6 class="font-weight-bolder mb-0">Convertir un Opérateur</h6>
+  </nav>
+
+  <!-- Lien de retour -->
+  <div class="mb-4">
+    <a [routerLink]="['/admin/operateurCibles']" class="btn btn-secondary">
+      <i class="fas fa-arrow-left"></i> Retour
+    </a>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h6 class="text-white">Étape {{ step }} : {{ step === 1 ? 'Choix de l\'Opérateur Cible' : step === 2 ? 'Choix de l\'Opérateur' : 'Date de Conversion' }}</h6>
+        </div>
+        <div class="card-body">
+          <!-- Success and error messages -->
+          <div *ngIf="successMessage" class="alert alert-success">
+            {{ successMessage }}
+          </div>
+          <div *ngIf="errorMessage" class="alert alert-warning">
+            {{ errorMessage }}
+          </div>
+
+          <!-- Étape 1: Choix de l'opérateur cible -->
+          <div *ngIf="step === 1">
+            <h5>Sélectionner l'Opérateur Cible</h5>
+            <div class="list-group">
+              <div *ngFor="let operateurcible of operateurscibles" class="list-group-item">
+                <input
+                  type="radio"
+                  [id]="operateurcible.idoperateurcible"
+                  name="operateurcible"
+                  [value]="operateurcible.idoperateurcible"
+                  (change)="selectOperateurCible($event)"
+                />
+                <label [for]="operateurcible.idoperateurcible" class="ms-2">{{ operateurcible.nom }}</label>
+              </div>
+            </div>
+            <button (click)="goToStep(2)" [disabled]="!selectedOperateurCible" class="btn btn-primary mt-3">Suivant</button>
+          </div>
+
+          <!-- Étape 2: Choix de l'opérateur à associer -->
+          <div *ngIf="step === 2">
+            <h5>Sélectionner l'Opérateur à Associer</h5>
+            <div class="list-group">
+              <div *ngFor="let operateur of operateurs" class="list-group-item">
+                <input
+                  type="radio"
+                  [id]="operateur.idoperateur"
+                  name="operateur"
+                  [value]="operateur.idoperateur"
+                  (change)="selectOperateur($event)"
+                />
+                <label [for]="operateur.idoperateur" class="ms-2">{{ operateur.nom }}</label>
+              </div>
+            </div>
+            <!-- Previous and Next buttons -->
+            <div class="mt-3">
+              <button (click)="goToStep(1)" class="btn btn-secondary me-2" *ngIf="step === 2">Précédent</button>
+              <button (click)="goToStep(3)" [disabled]="!selectedOperateur" class="btn btn-primary">Suivant</button>
+            </div>
+          </div>
+
+          <!-- Étape 3: Sélection de la date de conversion -->
+          <div *ngIf="step === 3">
+            <h5>Choisir la Date de Conversion</h5>
+            <div class="form-group">
+              <label for="dateConversion">Date de Conversion</label>
+              <input
+                type="datetime-local"
+                id="dateConversion"
+                class="form-control"
+                [(ngModel)]="dateConversion"
+                [ngModelOptions]="{standalone: true}"
+              />
+            </div>
+            <div class="mt-3">
+              <button (click)="goToStep(2)" class="btn btn-secondary me-2">Précédent</button>
+              <button (click)="convertirOperateurs()" [disabled]="!dateConversion" class="btn btn-success">Terminer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
