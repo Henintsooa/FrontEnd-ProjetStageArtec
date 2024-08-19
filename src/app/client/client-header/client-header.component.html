@@ -1,0 +1,83 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg position-absolute top-0 z-index-3 w-100 shadow-none my-3  navbar-transparent mt-4">
+  <div class="container">
+    <a class="navbar-brand font-weight-bolder ms-lg-0 ms-3 text-white" href="../pages/dashboards/default.html">
+      <!-- ARTEC -->
+      <img src="../assets/img/logo_artec_blanc.png" class="navbar-brand-img"  alt="main_logo" style="width: 125px;">
+    </a>
+    <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon mt-2">
+        <span class="navbar-toggler-bar bar1"></span>
+        <span class="navbar-toggler-bar bar2"></span>
+        <span class="navbar-toggler-bar bar3"></span>
+      </span>
+    </button>
+    <div class="collapse navbar-collapse w-100 pt-3 pb-2 py-lg-0" id="navigation">
+      <ul class="navbar-nav navbar-nav-hover mx-auto">
+        <li class="nav-item dropdown dropdown-hover mx-2">
+          <a role="button" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center " id="dropdownMenuPages" data-bs-toggle="dropdown" aria-expanded="false">
+            Accueil
+          </a>
+        </li>
+        <li class="nav-item dropdown dropdown-hover mx-2">
+          <a role="button" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center " id="dropdownMenuBlocks" data-bs-toggle="dropdown" aria-expanded="false">
+            Se déclarer
+            <img src=" ../assets/img/down-arrow-dark.svg  " alt="down-arrow" class="arrow ms-1 d-lg-block d-none">
+            <img src="../assets/img/down-arrow-dark.svg" alt="down-arrow" class="arrow ms-1 d-lg-none d-block">
+          </a>
+          <div class="dropdown-menu dropdown-menu-animation dropdown-lg p-3 border-radius-xl mt-0 mt-lg-3" aria-labelledby="dropdownMenuEcommerce">
+            <div class="row d-none d-lg-block">
+              <div class="col-12 px-4 py-2">
+                <div class="row">
+                  <div class="col-12 position-relative">
+
+                    <a href="../pages/ecommerce/orders/list.html" class="dropdown-item border-radius-md">
+                      <span class="ps-3">Equipement terminaux ou services auxiliaires</span>
+                    </a>
+                    <a href="../pages/pages/orders/details.html" class="dropdown-item border-radius-md">
+                      <span class="ps-3">Fourniture de service de telecommunication</span>
+                    </a>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- responsive -->
+            <div class="d-lg-none">
+              <a href="../pages/ecommerce/orders/list.html" class="dropdown-item border-radius-md">
+                Order List
+              </a>
+              <a href="../pages/pages/orders/details.html" class="dropdown-item border-radius-md">
+                Order Details
+              </a>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item dropdown dropdown-hover mx-2">
+          <a role="button" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center " id="dropdownMenuAccount" data-bs-toggle="dropdown" aria-expanded="false">
+            Renouveller
+            <img src=" ../assets/img/down-arrow-dark.svg  " alt="down-arrow" class="arrow ms-1 d-lg-block d-none">
+            <img src="../assets/img/down-arrow-dark.svg" alt="down-arrow" class="arrow ms-1 d-lg-none d-block">
+          </a>
+        </li>
+        <li class="nav-item dropdown dropdown-hover mx-2 d-lg-none">
+          <!-- Visible only on mobile (small and medium screens) -->
+          <a href="javascript:;" (click)="logout()" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center" id="dropdownMenuAccount" aria-expanded="false">
+            Déconnexion
+          </a>
+        </li>
+
+      </ul>
+      <ul class="navbar-nav d-lg-block d-none">
+        <li class="nav-item">
+          <a href="javascript:;" (click)="logout()" class="btn btn-sm  bg-gradient-secondary  btn-round mb-0 me-1">
+            <i class="fa fa-sign-out-alt fa-2x me-sm-1"></i>
+            <span class="d-sm-inline d-none">Déconnexion</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+

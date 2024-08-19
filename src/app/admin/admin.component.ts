@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { AdminAsideComponent } from '../admin-aside/admin-aside.component';
-import { AdminHeaderComponent } from "../admin-header/admin-header.component";
 import { RouterOutlet } from '@angular/router';
+import { AdminHeaderComponent } from './admin-header/admin-header.component';
+import { AdminAsideComponent } from './admin-aside/admin-aside.component';
 
 @Component({
   selector: 'app-admin',

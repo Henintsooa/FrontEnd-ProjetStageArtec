@@ -47,7 +47,7 @@ export class ConnexionComponent {
             if (response.role === 'admin') {
               this.router.navigate(['/admin/dashboard']); // Redirection pour les administrateurs
             } else if (response.role === 'user') {
-              this.router.navigate(['/inscription']); // Redirection pour les utilisateurs
+              this.router.navigate(['/client/accueil']); // Redirection pour les utilisateurs
             }
           } else {
             // Message d'erreur en cas de statut non 200

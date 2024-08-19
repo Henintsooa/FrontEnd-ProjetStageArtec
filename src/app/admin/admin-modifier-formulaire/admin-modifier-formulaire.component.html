@@ -1,0 +1,139 @@
+<div class="container mt-4">
+  <nav aria-label="breadcrumb" class="mb-5">
+    <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+      <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages / Formulaires</a></li>
+      <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Modifier Formulaire</li>
+    </ol>
+    <h6 class="font-weight-bolder mb-0">Modifier le Formulaire</h6>
+  </nav>
+
+  <!-- Lien de retour -->
+  <div class="mb-4">
+    <a [routerLink]="['/admin/formulaire']" class="btn btn-secondary">
+      <i class="fas fa-arrow-left"></i> Retour
+    </a>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary">
+          <h6 class="text-white">Ajouter une Nouvelle Catégorie</h6>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="addCategory()">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="newCategoryName" class="form-label">Nom de la Nouvelle Catégorie</label>
+                <input type="text" id="newCategoryName" class="form-control" [(ngModel)]="newCategoryName" name="newCategoryName" placeholder="Entrez le nom de la catégorie" required />
+              </div>
+              <div class="col-md-6">
+                <label for="newCategoryResponses" class="form-label">Nombre de Réponses</label>
+                <input type="number" min="1" id="newCategoryResponses" class="form-control" [(ngModel)]="newCategoryResponses" name="newCategoryResponses" placeholder="Entrez le nombre de réponses" required />
+              </div>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary">Ajouter Catégorie</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true" [ngClass]="{'show': showModal}" [style.display]="showModal ? 'block' : 'none'">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="successModalLabel">Catégorie ajoutée</h5>
+          <button type="button" class="btn" aria-label="Close" (click)="closeModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body text-center">
+          La catégorie a été ajoutée avec succès !
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h6 class="text-white">Modifier le Formulaire</h6>
+        </div>
+        <div class="card-body">
+          <div *ngIf="success" class="alert alert-success">
+            {{ success }}
+          </div>
+          <div *ngIf="error" class="alert alert-warning">
+            {{ error }}
+          </div>
+          <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="type" class="form-label">Type formulaire<span class="text-danger">*</span></label>
+                <input formControlName="type" id="type" type="text" class="form-control" placeholder="Type du formulaire" required>
+              </div>
+              <div class="col-md-6">
+                <label for="nom" class="form-label">Nom du formulaire<span class="text-danger">*</span></label>
+                <input formControlName="nom" id="nom" type="text" class="form-control" placeholder="Nom du formulaire" required>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="desc" class="form-label">Description<span class="text-danger">*</span></label>
+                <input formControlName="description" id="desc" type="text" class="form-control" placeholder="Description du formulaire" required>
+              </div>
+              <div class="col-md-6">
+                <label for="image" class="form-label">Image</label>
+                <input formControlName="image" id="image" type="file" class="form-control" (change)="onFileChange($event)">
+              </div>
+            </div>
+            <div class="mb-3">
+              <h6 class="text-primary">Questions</h6>
+            </div>
+            <div formArrayName="questions">
+              <div *ngFor="let category of questions.controls; let cIndex = index" [formGroupName]="cIndex">
+                <h6>{{ category.get('categorie')?.value }}</h6>
+                <div formArrayName="questions">
+                  <div *ngFor="let question of getQuestionsFormArray(category).controls; let qIndex = index" [formGroupName]="qIndex" class="mb-3">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label for="questionText{{cIndex}}-{{qIndex}}" class="form-label">Question</label>
+                        <input id="questionText{{cIndex}}-{{qIndex}}" type="text" class="form-control mb-2" formControlName="text" placeholder="Question">
+                        <div class="form-check mb-3">
+                          <input type="checkbox" class="form-check-input" formControlName="obligatoire" id="questionObligatoire{{cIndex}}-{{qIndex}}">
+                          <label for="questionObligatoire{{cIndex}}-{{qIndex}}" class="form-check-label">Obligatoire</label>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="questionType{{cIndex}}-{{qIndex}}" class="form-label">Type de réponse</label>
+                        <select class="form-select mb-2" formControlName="type">
+                          <option *ngFor="let type of typeQuestions" [value]="type.idtypequestion">{{ type.nom }}</option>
+                        </select>
+                      </div>
+                      <input type="hidden" formControlName="categorie_id">
+                      <div class="col-12">
+                        <button type="button" class="btn btn-danger btn-sm" (click)="removeQuestion(cIndex, qIndex)">Supprimer</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-success btn-sm mt-2" (click)="addQuestion(cIndex)">Ajouter une question</button>
+              </div>
+            </div>
+
+
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary">Modifier le formulaire</button>
+            </div>
+          </form>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

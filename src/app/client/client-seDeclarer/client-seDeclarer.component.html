@@ -1,0 +1,203 @@
+<section class="header">
+  <div class="page-header align-items-start min-vh-30 pt-3 pb-5 m-3 border-radius-lg" style="background-image: url('../assets/img/curved-images/artecBackground.jpg');">
+    <span class="mask bg-gradient-dark opacity-2"></span>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-5 text-center mx-auto">
+          <h1 class="text-white mb-2 mt-8">Se Déclarer</h1>
+          <p class="text-lead text-white">Veuillez compléter le formulaire de déclaration, s'il vous plait</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container mt-4">
+  <!-- Lien de retour -->
+  <div class="mb-4">
+    <a [routerLink]="['/client/accueil']" class="btn btn-secondary">
+      <i class="fas fa-arrow-left"></i> Retour
+    </a>
+  </div>
+
+  <form [formGroup]="registrationForm" (ngSubmit)="submitForm()">
+    <div class="row">
+      <div class="col-12">
+        <!-- Carte pour l'image de fond -->
+        <div class="row mb-5">
+          <div class="page-header min-height-300 border-radius-lg mt-4" [style.backgroundImage]="'url(' + imgSrc + ')'" style="background-position: center;">
+            <span class="mask bg-gradient-primary opacity-1"></span>
+          </div>
+          <div class="card card-body blur shadow-blur mx-4 mt-n6 overflow-hidden text-center">
+            <div class="row gx-4 justify-content-center">
+              <div class="col-auto my-auto">
+                <div class="h-100">
+                  <h3 class="text-primary mb-1">{{ formulaires[0]?.nomformulaire }}</h3>
+                  <p class="mb-0 font-weight-bold text-sm mt-3 text-wrap">
+                    <span class="ms-1" style="word-wrap: break-word; white-space: normal;">
+                      {{ formulaires[0]?.descriptiontypeformulaire }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informations sur l’opérateur -->
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <div class="card mb-4">
+              <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h6 class="text-white">Renseignements sur l’opérateur</h6>
+                <button type="button" class="btn btn-box-tool btn-sm text-white" (click)="toggleCollapseStatic()">
+                  <i class="fa" [ngClass]="{'fa-minus': !isCollapsedStatic, 'fa-plus': isCollapsedStatic}"></i>
+                </button>
+              </div>
+              <div [ngClass]="{'collapse': isCollapsedStatic}" class="card-body">
+                <span class="font-weight-bold ms-1">1)</span>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="nomoperateur" class="form-label">Nom de l'opérateur <span class="text-danger">*</span></label>
+                    <input formControlName="nomoperateur" id="nomoperateur" type="text" class="form-control" placeholder="Nom de l'opérateur" aria-label="Nom de l'opérateur">
+                    <small *ngIf="registrationForm.get('nomoperateur')?.errors && registrationForm.get('nomoperateur')?.touched" class="text-danger">
+                      <small *ngIf="registrationForm.get('nomoperateur')?.hasError('required')">Le champ nom de l'opérateur est obligatoire.</small>
+                    </small>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">Email de l'opérateur <span class="text-danger">*</span></label>
+                    <input formControlName="email" id="email" type="email" class="form-control" placeholder="Email de l'opérateur" aria-label="Email de l'opérateur">
+                    <small *ngIf="registrationForm.get('email')?.errors && registrationForm.get('email')?.touched" class="text-danger">
+                      <small *ngIf="registrationForm.get('email')?.hasError('required')">Le champ email de l'opérateur est obligatoire.</small>
+                      <small *ngIf="registrationForm.get('email')?.hasError('email')">Veuillez entrer une adresse email valide.</small>
+                    </small>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="adresseoperateur" class="form-label">Adresse <span class="text-danger">*</span></label>
+                    <input formControlName="adresseoperateur" id="adresseoperateur" type="text" class="form-control" placeholder="Adresse" aria-label="Adresse">
+                    <small *ngIf="registrationForm.get('adresseoperateur')?.errors && registrationForm.get('adresseoperateur')?.touched" class="text-danger">
+                      <small *ngIf="registrationForm.get('adresseoperateur')?.hasError('required')">Le champ adresse est obligatoire.</small>
+                    </small>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="idville" class="form-label">Ville <span class="text-danger">*</span></label>
+                    <select formControlName="idville" id="idville" class="form-control">
+                      <option value="" disabled selected>Choisissez une ville</option>
+                      <option *ngFor="let ville of villes" [value]="ville.idville">{{ ville.nom }}</option>
+                    </select>
+                    <small *ngIf="registrationForm.get('idville')?.errors && registrationForm.get('idville')?.touched" class="text-danger">
+                      <small *ngIf="registrationForm.get('idville')?.hasError('required')">Le champ ville est obligatoire.</small>
+                    </small>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="telephone" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                    <input formControlName="telephone" id="telephone" type="number" class="form-control" placeholder="Téléphone" aria-label="Téléphone">
+                    <small *ngIf="registrationForm.get('telephone')?.errors && registrationForm.get('telephone')?.touched" class="text-danger">
+                      <small *ngIf="registrationForm.get('telephone')?.hasError('required')">Le champ téléphone est obligatoire.</small>
+                    </small>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="telecopie" class="form-label">Télécopie</label>
+                    <input formControlName="telecopie" id="telecopie" type="text" class="form-control" placeholder="Télécopie" aria-label="Télécopie">
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="idstructurejuridique" class="form-label">Structure Juridique <span class="text-danger">*</span></label>
+                    <select formControlName="idstructurejuridique" id="idstructurejuridique" class="form-control">
+                      <option value="" disabled selected>Choisissez une structure juridique</option>
+                      <option *ngFor="let structure of structuresJuridique" [value]="structure.idstructurejuridique">{{ structure.nom }}</option>
+                    </select>
+                    <small *ngIf="registrationForm.get('idstructurejuridique')?.errors && registrationForm.get('idstructurejuridique')?.touched" class="text-danger">
+                      <small *ngIf="registrationForm.get('idstructurejuridique')?.hasError('required')">Le champ Structure Juridique est obligatoire.</small>
+                    </small>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grouper les questions par catégorie -->
+        <ng-container *ngFor="let category of getCategories(formulaires); let idx = index">
+          <div class="card mb-4">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+              <h6 class="text-white">{{ category.name }}</h6>
+              <button type="button" class="btn btn-box-tool btn-sm text-white"
+                (click)="toggleCollapse(idx)" [attr.aria-expanded]="!isCollapsed[idx]">
+                <i class="fa" [ngClass]="{'fa-minus': !isCollapsed[idx], 'fa-plus': isCollapsed[idx]}"></i>
+              </button>
+            </div>
+            <div [id]="'category-' + idx" class="card-body collapse" [ngClass]="{'show': !isCollapsed[idx]}">
+              <div class="card-body">
+                <div class="row">
+                  <ng-container *ngFor="let i of [].constructor(category.nombreReponses); let idx = index">
+                    <ng-container *ngIf="idx > 0">
+                      <hr>
+                    </ng-container>
+                    <span class="font-weight-bold ms-1">{{ idx + 1 }})</span>
+                    <ng-container *ngFor="let question of category.questions; let questionIdx = index">
+                      <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                          <label [for]="generateControlName(question.idquestion, idx, category.id)">
+                            {{ question.textquestion }}
+                            <span *ngIf="question.questionobligatoire" class="text-danger">*</span>
+                          </label>
+                          <ng-container [ngSwitch]="question.typequestion">
+                            <input *ngSwitchCase="'file'"
+                              [formControlName]="generateControlName(question.idquestion, idx, category.id)"
+                              type="file"
+                              class="form-control"
+                              [attr.required]="question.questionobligatoire ? true : null"
+                              accept=".pdf"
+                              />
+
+
+                            <input *ngSwitchCase="'text'"
+                              [formControlName]="generateControlName(question.idquestion, idx, category.id)"
+                              type="text"
+                              class="form-control"
+                              [attr.required]="question.questionobligatoire ? true : null" />
+
+                            <input *ngSwitchCase="'number'"
+                              [formControlName]="generateControlName(question.idquestion, idx, category.id)"
+                              type="number"
+                              class="form-control"
+                              [attr.required]="question.questionobligatoire ? true : null" />
+
+                            <select *ngSwitchCase="'select'"
+                              [formControlName]="generateControlName(question.idquestion, idx, category.id)"
+                              class="form-control"
+                              [attr.required]="question.questionobligatoire ? true : null">
+                              <option *ngFor="let option of question.options" [value]="option">{{ option }}</option>
+                            </select>
+
+                            <textarea *ngSwitchCase="'textarea'"
+                              [formControlName]="generateControlName(question.idquestion, idx, category.id)"
+                              class="form-control"
+                              [attr.required]="question.questionobligatoire ? true : null"></textarea>
+                          </ng-container>
+                          <small *ngIf="registrationForm.get(generateControlName(question.idquestion, idx, category.id))?.invalid && registrationForm.get(generateControlName(question.idquestion, idx, category.id))?.touched" class="text-danger">
+                            <small *ngIf="registrationForm.get(generateControlName(question.idquestion, idx, category.id))?.hasError('required')">Cette question est obligatoire.</small>
+                          </small>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </ng-container>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+
+        <div class="card mb-4">
+          <div class="card-body d-flex justify-content-end">
+              <button (click)="submitForm()" class="btn btn-primary btn-lg w-100 w-md-50">Soumettre</button>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </form>
+</div>
