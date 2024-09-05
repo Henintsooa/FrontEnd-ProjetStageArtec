@@ -19,7 +19,8 @@ export class AdminOperateurCiblesComponent implements OnInit {
   deleteId: number | null = null;
   selectedOperateurs: any[] = [];
   selectAllOperateurs: boolean = false;
-
+  selectedStatus: string = 'null';
+  searchKeyword: string = '';
 
   constructor(private sensibilisationService: SensibilisationService) { }
 
@@ -27,21 +28,22 @@ export class AdminOperateurCiblesComponent implements OnInit {
     this.loadOperateurs();
   }
 
-  loadOperateurs(params?: any): void {
-    this.sensibilisationService.getOperateurs(params).subscribe({
-      next: (data) => {
+  loadOperateurs(keyword: string = '', status: string = ''): void {
+    this.sensibilisationService.getOperateursHistorique({ keyword, status }).subscribe(
+      (data: any[]) => {
         this.operateurs = data;
-        this.error = null;
       },
-      error: (err) => {
-        console.error('Erreur lors de la récupération des opérateurs :', err);
-        this.error = 'Erreur lors de la récupération des opérateurs.';
-      }
-    });
+      (error: any) => this.errorMessage = 'Erreur lors de la récupération des opérateurs'
+    );
   }
 
-  onSearch(keyword: string): void {
-    this.loadOperateurs({ keyword });
+
+  onSearch(): void {
+    this.loadOperateurs(this.searchKeyword, this.selectedStatus);
+  }
+
+  onStatusChange(): void {
+    this.loadOperateurs(this.searchKeyword, this.selectedStatus);
   }
 
   setDeleteId(id: number): void {

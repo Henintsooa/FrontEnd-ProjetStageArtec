@@ -16,6 +16,8 @@ import { AdminConvertirOperateurComponent } from './admin/admin-convertir-operat
 import { ClientComponent } from './client/client.component';
 import { ClientAccueilComponent } from './client/client-accueil/client-accueil.component';
 import { ClientSeDeclarerComponent } from './client/client-seDeclarer/client-seDeclarer.component';
+import { DemandeComponent } from './admin/demande/demande.component';
+import { DemandeDetailsComponent } from './admin/demande-details/demande-details.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch:'full' },
@@ -30,6 +32,8 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: AdminDashboardComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+      { path: 'demandes', component: DemandeComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+      { path: 'demandeDetails/:iddemande', component: DemandeDetailsComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
       { path: 'formulaire', component: FormulairesComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
       { path: 'formulaires/:idtypeformulaire', component: FormulaireDetailsComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
       { path: 'nouveauFormulaire', component: NouveauFormulaireComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { SensibilisationService } from '../../services/sensibilisation.service';
 import { VilleService } from '../../services/ville.service';
 import { CommonModule } from '@angular/common';
+import { RegimeService } from '../../services/regime.service';
 
 @Component({
   selector: 'app-admin-modifier-operateur',
@@ -19,10 +20,12 @@ export class AdminModifierOperateurComponent implements OnInit {
   errorMessage: string = '';
   villes: any[] = [];
   operateurId: number = 0;
+  regimes: any;
 
   constructor(
     private fb: FormBuilder,
     private sensibilisationService: SensibilisationService,
+    private regimeService: RegimeService,
     private villeService: VilleService,
     private route: ActivatedRoute,
     private router: Router
@@ -30,7 +33,9 @@ export class AdminModifierOperateurComponent implements OnInit {
     this.operateurForm = this.fb.group({
       nom: ['', [Validators.required, Validators.maxLength(200)]],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(200)]],
-      idVille: ['', [Validators.required, Validators.pattern('^[0-9]+$')]]
+      adresse: ['', [Validators.required, Validators.maxLength(200)]],
+      idregime: ['', [Validators.required]],
+      idville: ['', [Validators.required, Validators.pattern('^[0-9]+$')]]
     });
   }
 
@@ -38,6 +43,7 @@ export class AdminModifierOperateurComponent implements OnInit {
     this.operateurId = +this.route.snapshot.paramMap.get('id')!;
     this.loadVilles();
     this.loadOperateurData();
+    this.loadRegimes();
   }
 
   loadVilles(): void {
@@ -58,7 +64,9 @@ export class AdminModifierOperateurComponent implements OnInit {
         this.operateurForm.setValue({
           nom: operateur.nom,
           email: operateur.email,
-          idVille: operateur.idville
+          adresse: operateur.adresse,
+          idregime: operateur.idregime,
+          idville: operateur.idville
         });
       },
       error: (error: any) => {
@@ -67,6 +75,16 @@ export class AdminModifierOperateurComponent implements OnInit {
     });
   }
 
+  loadRegimes(): void {
+    this.regimeService.getRegimes().subscribe({
+      next: (response: any) => {
+        this.regimes = response;
+      },
+      error: (error: any) => {
+        console.error('Erreur lors du chargement des villes', error);
+      }
+    });
+  }
 
   onSubmit(): void {
     if (this.operateurForm.valid) {

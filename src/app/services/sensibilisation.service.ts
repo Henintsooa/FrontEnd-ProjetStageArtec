@@ -19,6 +19,21 @@ export class SensibilisationService {
     return this.http.get<any>(`${this.apiUrl}/operateurCibles`, { params: httpParams });
   }
 
+  // getOperateursHistorique(keyword: string = '', status: string = ''): Observable<any> {
+  //   let params = new HttpParams();
+  //   if (keyword) {
+  //     params = params.set('keyword', keyword);
+  //   }
+  //   if (status) {
+  //     params = params.set('status', status);
+  //   }
+  //   return this.http.get<any>(`${this.apiUrl}/getOperateursHistorique`, { params });
+  // }
+  getOperateursHistorique(params: { keyword: string; status: string }): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/getOperateursHistorique`, { params: params });
+  }
+
+
   deleteOperateur(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/operateurCible/${id}`);
   }

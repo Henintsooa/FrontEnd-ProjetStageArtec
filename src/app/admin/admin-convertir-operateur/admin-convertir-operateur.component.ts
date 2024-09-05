@@ -65,7 +65,7 @@ throw new Error('Method not implemented.');
       this.sensibilisationService.convertirOperateur({
         idoperateurcible: this.selectedOperateurCible,
         idoperateur: this.selectedOperateur,
-        status: 1, // À adapter selon votre logique
+        status: 1,
         dateconversion: this.dateConversion
       }).subscribe(
         response => {

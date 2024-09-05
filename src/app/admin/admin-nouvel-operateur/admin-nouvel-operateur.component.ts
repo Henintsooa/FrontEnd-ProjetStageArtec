@@ -4,6 +4,7 @@ import { SensibilisationService } from '../../services/sensibilisation.service';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { VilleService } from '../../services/ville.service';
+import { RegimeService } from '../../services/regime.service';
 
 @Component({
   selector: 'app-admin-operateur-cibles',
@@ -16,15 +17,20 @@ export class AdminNouvelOperateurComponent {
   successMessage: string = '';
   errorMessage: string = '';
   villes: any[] = [];
+  regimes: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private sensibilisationService: SensibilisationService,
-    private villeService: VilleService
+    private villeService: VilleService,
+    private regimeService: RegimeService
+
   ) {
     this.operateurForm = this.fb.group({
       nom: ['', [Validators.required, Validators.maxLength(200)]],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(200)]],
+      adresse: ['', [Validators.required, Validators.maxLength(200)]],
+      idregime: ['', [Validators.required]],
       idville: ['', [Validators.required, Validators.pattern('^[0-9]+$')]]
     });
   }
@@ -40,12 +46,25 @@ export class AdminNouvelOperateurComponent {
     });
   }
 
+  loadRegimes(): void {
+    this.regimeService.getRegimes().subscribe({
+      next: (response: any) => {
+        this.regimes = response;
+      },
+      error: (error: any) => {
+        console.error('Erreur lors du chargement des villes', error);
+      }
+    });
+  }
+
   ngOnInit(): void {
     this.loadVilles();
+    this.loadRegimes();
   }
 
   onSubmit(): void {
     if (this.operateurForm.valid) {
+      console.log('Form values:', this.operateurForm.value);
       this.sensibilisationService.addOperateurCible(this.operateurForm.value)
         .subscribe(
           response => {

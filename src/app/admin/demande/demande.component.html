@@ -1,0 +1,180 @@
+<section class="min-vh-100 mb-8">
+  <div class="container">
+    <!-- Modal de confirmation -->
+  <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmationModalLabel">Confirmer la Validation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Êtes-vous sûr de vouloir valider cette demande ? Cette action est irréversible.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-primary" (click)="confirmValidation()">Confirmer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal de refus -->
+  <div class="modal fade" id="refusModal" tabindex="-1" aria-labelledby="refusModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="refusModalModalLabel">Confirmation de Suppression</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Êtes-vous sûr de vouloir supprimer cette demande ?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-danger" (click)="confirmSuppression()">Supprimer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal de demande d'information -->
+  <div class="modal fade" id="infoRequestModal" tabindex="-1" aria-labelledby="infoRequestModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="infoRequestModal">Demander des Informations Supplémentaires</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form (ngSubmit)="sendInfoRequest()">
+            <div class="mb-3">
+              <label for="infoRequestMessage" class="form-label">Message :</label>
+              <textarea id="infoRequestMessage" class="form-control" rows="4" [(ngModel)]="infoRequestMessage" name="infoRequestMessage" required></textarea>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <button type="submit" class="btn btn-warning">Envoyer</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+        <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
+        <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Demandes</li>
+      </ol>
+      <h6 class="font-weight-bolder mb-0">Liste des Demandes de Déclaration</h6>
+    </nav>
+
+    <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+      <form (ngSubmit)="onSearch()" class="d-flex">
+        <div class="input-group me-2">
+          <span class="input-group-text"><i class="fas fa-search" aria-hidden="true"></i></span>
+          <input type="text" class="form-control" placeholder="Opérateur, Email, ..." [(ngModel)]="searchKeyword" name="keyword">
+        </div>
+      </form>
+
+
+      <div class="filter-status ms-2">
+        <select id="statusFilter" class="form-select" [(ngModel)]="selectedStatus" (ngModelChange)="onStatusChange()">
+          <option value="1">Filtrer par (Défaut)</option>
+          <option value="2">Filtrer par (Validée)</option>
+          <option value="3">Filtrer par (Refusée)</option>
+          <option value="">Filtrer par (En attente d'information)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header bg-primary">
+            <h6 class="mb-0  text-white">Demandes de Déclaration</h6>
+          </div>
+          <div class="card-body pt-4 p-3">
+            <ul class="list-group">
+              <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg" *ngFor="let demande of filteredDemandes">
+                <div class="row w-100">
+                  <h6 class="mb-3 text-sm text-primary">{{ demande.nomtypeformulaire }}</h6>
+                  <!-- Première colonne : Typeformulaire, Nomoperateur, et Lieu -->
+                  <div class="col-md-4 d-flex flex-column justify-content-center">
+                    <span class="mb-2 text-sm font-weight-bold">{{ demande.nomoperateur }}</span>
+                    <span class="mb-2 text-xs">
+                      <i class="fas fa-map-marker-alt me-2"></i>Région:
+                      <span class="text-dark font-weight-bold ms-sm-2">{{ demande.nomville }}</span>
+                    </span>
+                  </div>
+
+                  <!-- Deuxième colonne : Dates -->
+                  <div class="col-md-4 d-flex flex-column justify-content-center">
+                    <span class="mb-2 text-xs">Date de Déclaration:
+                      <span class="text-success font-weight-bold ms-sm-2">{{ demande.datedeclaration | date:'dd/MM/yyyy' }}</span>
+                    </span>
+                    <span class="mb-2 text-xs">Date d'Expiration:
+                      <span class="text-danger font-weight-bold ms-sm-2">{{ demande.dateexpiration | date:'dd/MM/yyyy' }}</span>
+                    </span>
+                  </div>
+
+
+                  <div class="col-md-4 d-flex justify-content-md-end justify-content-start align-items-center">
+                    <ng-container *ngIf="demande.status === 1; else statusLabel">
+                      <a [routerLink]="['/admin/demandeDetails', demande.iddemande]" class="btn btn-link text-primary px-3 mb-0" title="Voir plus">
+                        <div class="btn btn-primary btn-square p-3 d-flex align-items-center justify-content-center">
+                          <i class="fas fa-eye text-white"></i>
+                        </div>
+                      </a>
+                      <a (click)="openModal(demande.iddemande)" data-bs-toggle="modal" data-bs-target="#confirmationModal" class="btn btn-success btn-square text-white px-3 mx-2" title="Valider">
+                        <i class="fas fa-check"></i>
+                      </a>
+                      <a (click)="openModal(demande.iddemande)" data-bs-toggle="modal" data-bs-target="#refusModal" class="btn btn-danger btn-square text-white px-3 mx-2" title="Supprimer">
+                        <i class="fas fa-trash"></i>
+                      </a>
+                      <a (click)="openModal(demande.iddemande)" data-bs-toggle="modal" data-bs-target="#infoRequestModal" class="btn btn-warning btn-square text-white px-3 mx-2" title="Demander Info">
+                        <i class="fas fa-envelope"></i>
+                      </a>
+                    </ng-container>
+
+                    <!-- Afficher l'état de la demande si le statut est différent de 1 -->
+                    <ng-template #statusLabel>
+                      <div
+                        class="btn btn"
+                        [ngClass]="{
+                          'bg-gradient-success': demande.status === 2,
+                          'bg-gradient-warning': demande.status === 3,
+                          'bg-gradient-secondary': demande.status === null
+                        }"
+                      >
+                        {{ getStatusLabel(demande.status) }}
+                      </div>
+                    </ng-template>
+                    <a [routerLink]="['/admin/demandeDetails', demande.iddemande]" class="btn btn-link text-primary px-3 mb-0" title="Voir plus">
+                      <div class="btn btn-primary btn-square p-3 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-eye text-white"></i>
+                      </div>
+                    </a>
+
+                  </div>
+
+
+                </div>
+              </li>
+
+
+              <li *ngIf="filteredDemandes.length === 0" class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
+                <div class="d-flex flex-column text-center w-100">
+                  <span class="text-sm">Aucune demande disponible.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

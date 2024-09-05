@@ -24,6 +24,19 @@
       </li>
       <li class="nav-item">
         <a class="nav-link"
+           [routerLink]="['/admin/demandes']"
+           routerLinkActive="active bg-secondary"
+           [routerLinkActiveOptions]="{exact: true}">
+          <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="fas fa-tasks"
+               [ngClass]="{'text-primary': !isActive('/admin/demandes'), 'text-white': isActive('/admin/demandes')}">
+            </i>
+          </div>
+          <span class="nav-link-text ms-1">Demandes <tr> de déclaration</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link"
            [routerLink]="['/admin/formulaire']"
            routerLinkActive="active bg-secondary"
            [routerLinkActiveOptions]="{exact: true}">

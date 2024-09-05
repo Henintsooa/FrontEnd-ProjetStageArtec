@@ -51,9 +51,29 @@
               </div>
 
               <div class="col-md-6">
-                <label for="idville" class="form-label">Ville</label>
-                <select formControlName="idVille" id="idville" class="form-select">
-                  <option value="" disabled>Choisissez une ville</option>
+                <label for="adresse" class="form-label">Adresse</label>
+                <input id="adresse" formControlName="adresse" class="form-control" />
+                <div *ngIf="operateurForm.get('adresse')?.invalid && (operateurForm.get('adresse')?.dirty || operateurForm.get('adresse')?.touched)" class="text-danger mt-1">
+                  <div *ngIf="operateurForm.get('adresse')?.errors?.['required']"><small>Le adresse est requis.</small></div>
+                  <div *ngIf="operateurForm.get('adresse')?.errors?.['maxlength']"><small>Le adresse ne peut pas dépasser 200 caractères.</small></div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="idregime" class="form-label">Régime</label>
+                <select formControlName="idregime" id="idregime" class="form-select">
+                  <option value="" disabled>Choisissez un régime</option>
+                  <option *ngFor="let regime of regimes" [value]="regime.idregime">{{ regime.nom }}</option>
+                </select>
+                <div *ngIf="operateurForm.get('idregime')?.invalid && (operateurForm.get('idregime')?.touched)" class="text-danger mt-1">
+                  <small>Le champ régime est obligatoire.</small>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="idville" class="form-label">Region</label>
+                <select formControlName="idville" id="idville" class="form-select">
+                  <option value="" disabled>Choisissez une region</option>
                   <option *ngFor="let ville of villes" [value]="ville.idville">{{ ville.nom }}</option>
                 </select>
                 <div *ngIf="operateurForm.get('idVille')?.invalid && (operateurForm.get('idVille')?.touched)" class="text-danger mt-1">
