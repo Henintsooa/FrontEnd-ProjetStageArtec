@@ -317,7 +317,7 @@ export class DemandeComponent implements OnInit {
       case 3:
         return 'Refusée';
       case null:
-        return 'En attente';
+        return 'En attente d\'information supplémentaire';
       default:
         return 'Inconnu';
     }

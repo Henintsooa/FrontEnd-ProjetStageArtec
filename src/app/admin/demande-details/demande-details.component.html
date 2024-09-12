@@ -22,15 +22,15 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="refusModalModalLabel">Confirmation de Suppression</h5>
+          <h5 class="modal-title" id="refusModalModalLabel">Confirmation de Refus</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          Êtes-vous sûr de vouloir supprimer cette demande ?
+          Êtes-vous sûr de vouloir refuser cette demande ?
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-          <button type="button" class="btn btn-danger" (click)="confirmSuppression()">Supprimer</button>
+          <button type="button" class="btn btn-danger" (click)="confirmSuppression()">Refuser</button>
         </div>
       </div>
     </div>
@@ -72,7 +72,7 @@
 
       <!-- Bouton d'export PDF -->
       <button class="btn btn-primary ms-auto" (click)="exportPdf(details[0].iddemande)">
-        <i class="fas fa-file-pdf me-2"></i> Exporter en PDF
+        <i class="fas fa-file-pdf me-2"></i> Télécharger PDF
       </button>
     </div>
 
@@ -90,7 +90,7 @@
       <a data-bs-toggle="modal" data-bs-target="#confirmationModal" class="btn btn-success btn-square text-white px-3 mx-2" title="Valider">
         <i class="fas fa-check"></i>
       </a>
-      <a href="#" class="btn btn-danger btn-square text-white px-3 mx-2" data-bs-toggle="modal" data-bs-target="#refusModal" title="Supprimer">
+      <a href="#" class="btn btn-danger btn-square text-white px-3 mx-2" data-bs-toggle="modal" data-bs-target="#refusModal" title="Refuser">
         <i class="fas fa-trash"></i>
       </a>
       <a data-bs-toggle="modal" data-bs-target="#infoRequestModal" class="btn btn-warning btn-square text-white px-3 mx-2" title="Demander Info">
@@ -98,17 +98,28 @@
       </a>
     </div>
 
-    <!-- Afficher l'état de la demande si le statut est différent de 1 -->
+    <!-- Afficher les boutons et le statusLabel si le statut est null -->
+    <div *ngIf="details[0]?.status === null; else statusLabel" class="d-flex align-items-center">
+      <a data-bs-toggle="modal" data-bs-target="#confirmationModal" class="btn btn-success btn-square text-white px-3 mx-1" title="Valider">
+        <i class="fas fa-check"></i>
+      </a>
+      <a href="#" class="btn btn-danger btn-square text-white px-3 mx-1" data-bs-toggle="modal" data-bs-target="#refusModal" title="Refuser">
+        <i class="fas fa-trash"></i>
+      </a>
+      <!-- Le label de statut est rapproché des boutons -->
+      <div class="btn btn-xl bg-gradient-secondary ms-2">
+        {{ getStatusLabel(details[0].status) }}
+      </div>
+    </div>
+
+    <!-- Afficher uniquement le statusLabel pour les autres statuts -->
     <ng-template #statusLabel>
       <div
-        class="btn btn-xl"
         [ngClass]="{
           'bg-gradient-success': details[0].status === 2,
-          'bg-gradient-warning': details[0].status === 3,
-          'bg-gradient-secondary': details[0].status === null
+          'bg-gradient-warning': details[0].status === 3
         }"
       >
-        {{ getStatusLabel(details[0].status) }}
       </div>
     </ng-template>
 
@@ -126,31 +137,100 @@
         {{ errorMessage }}
       </div>
     </div>
+    <div class="card mb-3" *ngIf="details[0].status === null">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <form [formGroup]="form" (ngSubmit)="onSubmitDocumentSupplementaire(iddemande)">
+            <h6>Ajouter Document supplémentaire</h6>
+            <div class="form-group">
+              <label for="nomfichier">Nom du fichier :</label>
+              <input type="text" id="nomfichier" formControlName="nomfichier" class="form-control">
+              <div *ngIf="form.get('nomfichier')?.invalid && form.get('nomfichier')?.touched" class="text-danger text-sm">
+                Le nom du fichier est obligatoire.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="fichier">Fichier :</label>
+              <input type="file" id="fichier" (change)="onFileSelected($event)" class="form-control" accept=".pdf">
+              <div *ngIf="form.get('fichier')?.invalid && form.get('fichier')?.touched" class="text-danger text-sm">
+                Le fichier est obligatoire.
+              </div>
+            </div>
+
+            <div *ngIf="errorMessage" class="text-danger">
+              {{ errorMessage }}
+            </div>
+
+            <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Soumettre</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
     <div class="card">
       <div class="card-body">
-        <h6 class="text-primary mb-3">{{ details[0].nomtypeformulaire }}</h6>
-        <p class="text-muted mb-2">
-          <i class="fas fa-map-marker-alt me-2"></i>
-          <span class="text-sm">{{ details[0].nomville }}</span>
-        </p>
-        <p class="text-muted mb-2">
-          <span class="text-sm font-weight-bold">Opérateur: </span>
-          <span class="text-sm">{{ details[0].nomoperateur }}</span>
-        </p>
-        <p class="text-muted">
-          <span class="text-sm font-weight-bold">Date de Déclaration: </span>
-          <span class="text-sm">{{ details[0].datedeclaration | date:'dd/MM/yyyy' }}</span>
-        </p>
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h4 class="text-primary mb-3">{{ details[0].nomtypeformulaire }}</h4>
+            <p class="text-muted mb-2">
+              <i class="fas fa-map-marker-alt me-2"></i>
+              <span class="text-sm">{{ details[0].nomville }}</span>
+            </p>
+            <p class="text-muted mb-2">
+              <span class="text-sm font-weight-bold">Opérateur: </span>
+              <span class="text-sm">{{ details[0].nomoperateur }}</span>
+            </p>
+            <p class="text-muted mb-2">
+              <span class="text-sm font-weight-bold">Adresse: </span>
+              <span class="text-sm">{{ details[0].adresse }}</span>
+            </p>
+            <p class="text-muted">
+              <span class="text-sm font-weight-bold">Date de Demande: </span>
+              <span class="text-sm">{{ details[0].datedemande | date:'dd/MM/yyyy' }}</span>
+            </p>
+          </div>
+
+          <!-- Vérifiez si la date de déclaration existe déjà -->
+          <div *ngIf="hasDeclarationDate(); else showForm">
+            <!-- Affichage des dates -->
+            <div class="d-flex flex-column">
+              <p class="text-muted">
+              <span class="text-sm font-weight-bold">Date de Déclaration: </span>
+              <span class="text-success font-weight-bold ms-xs-2">{{ details[0].datedeclaration | date: 'dd/MM/yyyy' }}</span>
+              </p>
+
+              <p class="text-muted" *ngIf="details[0].dateexpiration">
+              <span class="text-sm font-weight-bold">Date d'expiration: </span>
+              <span class="text-danger font-weight-bold ms-xs-2">{{ details[0].dateexpiration | date: 'dd/MM/yyyy' }}</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Formulaire d'ajout de date de déclaration (affiché si datedeclaration est null) -->
+          <ng-template #showForm>
+            <form (ngSubmit)="onSubmitDateDeclaration(details[0].iddemande)" class="ms-auto d-flex" *ngIf="details[0].status === 2 && !details[0].datedeclaration">
+              <div class="form-group me-2">
+                <label for="declarationDate" class="form-label">Ajouter Date de Déclaration</label>
+                <input type="date" id="declarationDate" class="form-control" name="declarationDate" [(ngModel)]="declarationDate" required>
+              </div>
+              <button type="submit" class="btn btn-primary align-self-end">Enregistrer</button>
+            </form>
+          </ng-template>
+
+        </div>
       </div>
     </div>
   </div>
+
 
   <!-- Détails de l'opérateur -->
   <div class="mb-4">
     <div class="card">
       <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <h6 class="text-white">Renseignements sur l’opérateur</h6>
-        <button type="button" class="btn btn-box-tool btn-sm text-white" (click)="toggleCollapseStatic()">
+        <button type="button" class="btn btn-box-tool btn-sm text-white" (click)="toggleCollapseDoc()">
           <i class="fa" [ngClass]="{'fa-minus': !isCollapsedStatic, 'fa-plus': isCollapsedStatic}"></i>
         </button>
       </div>
@@ -234,6 +314,30 @@
           </div>
         </div>
       </ng-container>
+
+      <div class="card mb-4" *ngIf="documentssupplementaires.length > 0">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h6 class="text-white">Documents supplémentaires</h6>
+          <button type="button" class="btn btn-box-tool btn-sm text-white"
+                  (click)="toggleCollapseDoc()"
+                  [attr.aria-expanded]="!isCollapsedDoc">
+            <i class="fa" [ngClass]="{'fa-minus': !isCollapsedDoc, 'fa-plus': isCollapsedDoc}"></i>
+          </button>
+        </div>
+        <div class="card-body" *ngIf="!isCollapsedDoc">
+          <div class="row">
+            <div class="col-md-6 mb-3" *ngFor="let doc of documentssupplementaires">
+              <div class="form-group">
+                <label>{{ doc.nomdocument }} :</label>
+                <p>
+                  <a [href]="'http://127.0.0.1:8000/' + doc.filesupplementaire" target="_blank">{{ doc.filesupplementaire }}</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>

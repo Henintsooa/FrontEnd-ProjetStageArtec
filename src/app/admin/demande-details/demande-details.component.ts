@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { DemandeService } from '../../services/demande.service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 
 
 interface Response {
   iddemande: number;
+  datedemande: string;
   datedeclaration: string;
   dateexpiration: string;
   status: number;
@@ -26,30 +27,45 @@ interface Response {
   filereponse?: string;
   typequestion: string;
   nomcategoriequestion: string;
-}
 
+}
+interface DocumentSupplementaire {
+  nomdocument: string;
+  filesupplementaire: string;
+}
 @Component({
   selector: 'app-demande-details',
   standalone: true,
-  imports: [CommonModule, RouterModule,FormsModule],
+  imports: [CommonModule, RouterModule,FormsModule,ReactiveFormsModule],
   templateUrl: './demande-details.component.html',
   styleUrls: ['./demande-details.component.css']
 })
 export class DemandeDetailsComponent implements OnInit {
   public details: Response[] = [];
-  public categories: any[] = [];  // Structure mise à jour
+  public categories: any[] = [];
   public iddemande!: number;
   isCollapsed: boolean[] = [];
   isCollapsedStatic: boolean = false;
+  isCollapsedDoc: boolean = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
   infoRequestMessage: string = '';
+  declarationDate: string = '';
+  nomfichier: string = '';
+  fichier: File | null = null;
+  documentssupplementaires: DocumentSupplementaire[] = [];
+  form: FormGroup;
 
   constructor(
     private demandeService: DemandeService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private fb: FormBuilder,
   ) {
     this.isCollapsed = this.groupByCategory(this.details).map(() => true);
+    this.form = this.fb.group({
+      nomfichier: ['', Validators.required], // champ obligatoire
+      fichier: [null, Validators.required]  // champ obligatoire
+    });
   }
 
 
@@ -58,6 +74,70 @@ export class DemandeDetailsComponent implements OnInit {
       this.iddemande = +params.get('iddemande')!;
       this.fetchDetails();
     });
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.form.patchValue({
+        fichier: file
+      });
+      this.form.get('fichier')?.updateValueAndValidity();
+    }
+  }
+
+  // Méthode de soumission du formulaire
+  onSubmitDocumentSupplementaire(iddemande: number): void {
+    if (this.form.valid) {
+      const formData = new FormData();
+      formData.append('nomfichier', this.form.get('nomfichier')?.value);
+      formData.append('fichier', this.form.get('fichier')?.value);
+
+      this.demandeService.addDocumentSupplementaire(iddemande, formData).subscribe(
+        (response) => {
+          this.successMessage = response.message; // Message de succès renvoyé par le backend
+          this.errorMessage = null; // Réinitialiser l'erreur s'il y en avait
+          console.log('Fichier ajouté avec succès :', response.fileUrl);
+        },
+        (error) => {
+          this.successMessage = null; // Réinitialiser le message de succès
+          this.errorMessage = error.error.message || 'Erreur lors de l\'ajout du fichier.';
+          console.error('Erreur lors de l’ajout du fichier :', error);
+        }
+      );
+    }
+  }
+
+
+  onSubmitDateDeclaration(iddemande: number) {
+    if (this.declarationDate) {
+      this.demandeService.addDateDeclaration(iddemande, this.declarationDate).subscribe(
+        response => {
+          this.successMessage = "Date de déclaration enregistrée avec succès.";
+          this.errorMessage = null;
+        },
+        error => {
+          // Gérer l'erreur et afficher les détails de l'erreur retournée par le backend
+          this.errorMessage = "Erreur lors de l'enregistrement de la date. Détails : " + (error.error.message || error.message || "Une erreur est survenue.");
+          if (error.error.errors) {
+            // Si l'erreur contient des détails de validation, les afficher
+            for (const key in error.error.errors) {
+              if (error.error.errors.hasOwnProperty(key)) {
+                this.errorMessage += ` ${key}: ${error.error.errors[key].join(', ')}`;
+              }
+            }
+          }
+          this.successMessage = null;
+        }
+      );
+    } else {
+      this.errorMessage = "Veuillez sélectionner une date.";
+      this.successMessage = null;
+    }
+  }
+
+  hasDeclarationDate(): boolean {
+    return this.details.length > 0 && this.details[0].datedeclaration != null;
   }
 
   exportPdf(idDemande: number): void {
@@ -79,18 +159,50 @@ export class DemandeDetailsComponent implements OnInit {
   }
 
 
+  fetchDetails(): void {
+    this.demandeService.getResponsesByDemande(this.iddemande).subscribe(
+      (data: any[]) => {
+        console.log('Données récupérées:', data);
+        this.details = data;
+        this.documentssupplementaires = [];
 
+        data.forEach(item => {
+          if (item.documentssupplementaires) {
+            try {
+              const docs = JSON.parse(item.documentssupplementaires);
+              // Filtrer les documents dont les valeurs ne sont pas null
+              const filteredDocs = docs.filter((doc: DocumentSupplementaire) =>
+                doc.nomdocument && doc.filesupplementaire
+              );
+              this.documentssupplementaires = [
+                ...this.documentssupplementaires,
+                ...filteredDocs
+              ];
+            } catch (error) {
+              console.error('Erreur lors de l\'analyse JSON:', error);
+            }
+          }
+        });
 
+        // Enlève les doublons des documents
+        this.documentssupplementaires = this.removeDuplicates(this.documentssupplementaires);
 
-
-  private fetchDetails(): void {
-    this.demandeService.getResponsesByDemande(this.iddemande).subscribe(data => {
-      console.log('Données récupérées:', data); // Ajoutez ce log pour vérifier les données
-      this.details = data;
-      this.categorizeDetails();  // Organiser les détails par catégorie
-    });
+        console.log('Documents supplémentaires:', this.documentssupplementaires);
+        this.categorizeDetails();  // Organiser les détails par catégorie
+      },
+      (error) => {
+        console.error('Erreur lors de la récupération des détails:', error);
+      }
+    );
   }
 
+  removeDuplicates(array: DocumentSupplementaire[]): DocumentSupplementaire[] {
+    const uniqueDocs = new Map();
+    array.forEach(doc => {
+      uniqueDocs.set(doc.filesupplementaire, doc);
+    });
+    return Array.from(uniqueDocs.values());
+  }
 
   private categorizeDetails(): void {
     this.categories = this.groupByCategory(this.details);
@@ -115,6 +227,9 @@ export class DemandeDetailsComponent implements OnInit {
 
   toggleCollapseStatic() {
     this.isCollapsedStatic = !this.isCollapsedStatic;
+  }
+  toggleCollapseDoc() {
+    this.isCollapsedDoc = !this.isCollapsedDoc;
   }
   toggleCollapse(index: number) {
     this.isCollapsed[index] = !this.isCollapsed[index];
@@ -353,10 +468,8 @@ export class DemandeDetailsComponent implements OnInit {
         return 'Refusé';
       case 2:
         return 'Accepté';
-      case 3:
-        return 'En demande d\'information supplémentaire';
       default:
-        return 'Inconnu';
+        return 'En attente d\'information supplémentaire';
     }
   }
 }

@@ -10,6 +10,18 @@ export class DemandeService {
 
   constructor(private http: HttpClient) {}
 
+  addDocumentSupplementaire(iddemande: number, formData: FormData): Observable<any> {
+    const url = `${this.apiUrl}/addDocumentSupplementaire/${iddemande}`;
+    return this.http.post(url, formData);
+  }
+
+  addDateDeclaration(iddemande: number, dateDeclaration: string): Observable<any> {
+    const url = `${this.apiUrl}/addDateDeclaration/${iddemande}`;
+    const body = { dateDeclaration };
+
+    return this.http.post(url, body);
+  }
+
   addDemande(formData: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/demande`, formData);
   }
@@ -52,6 +64,17 @@ export class DemandeService {
     return this.http.get<any>(`${this.apiUrl}/getDemandes`, { params });
   }
 
+  getDemandesById(id: number, keyword: string = '', statusFilter: string = ''): Observable<any> {
+    let params = new HttpParams();
+    if (keyword) {
+      params = params.set('keyword', keyword);
+    }
+    if (statusFilter) {
+      params = params.set('statusFilter', statusFilter);
+    }
+
+    return this.http.get<any>(`${this.apiUrl}/getDemandes/${id}`, { params });
+  }
 
   accepterDemande (idDemande: number): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/accepterDemande/${idDemande}`,{});

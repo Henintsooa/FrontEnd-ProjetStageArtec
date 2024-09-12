@@ -23,15 +23,15 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="refusModalModalLabel">Confirmation de Suppression</h5>
+          <h5 class="modal-title" id="refusModalModalLabel">Confirmation de Refus</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          Êtes-vous sûr de vouloir supprimer cette demande ?
+          Êtes-vous sûr de vouloir refuser cette demande ?
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-          <button type="button" class="btn btn-danger" (click)="confirmSuppression()">Supprimer</button>
+          <button type="button" class="btn btn-danger" (click)="confirmSuppression()">Refuser</button>
         </div>
       </div>
     </div>
@@ -81,7 +81,7 @@
         <select id="statusFilter" class="form-select" [(ngModel)]="selectedStatus" (ngModelChange)="onStatusChange()">
           <option value="1">Filtrer par (Défaut)</option>
           <option value="2">Filtrer par (Validée)</option>
-          <option value="3">Filtrer par (Refusée)</option>
+          <option value="0">Filtrer par (Refusée)</option>
           <option value="">Filtrer par (En attente d'information)</option>
         </select>
       </div>
@@ -112,10 +112,10 @@
 
                   <!-- Deuxième colonne : Dates -->
                   <div class="col-md-4 d-flex flex-column justify-content-center">
-                    <span class="mb-2 text-xs">Date de Déclaration:
+                    <span *ngIf="demande.status === 2" class="mb-2 text-xs">Date de Déclaration:
                       <span class="text-success font-weight-bold ms-sm-2">{{ demande.datedeclaration | date:'dd/MM/yyyy' }}</span>
                     </span>
-                    <span class="mb-2 text-xs">Date d'Expiration:
+                    <span *ngIf="demande.status === 2" class="mb-2 text-xs">Date d'Expiration:
                       <span class="text-danger font-weight-bold ms-sm-2">{{ demande.dateexpiration | date:'dd/MM/yyyy' }}</span>
                     </span>
                   </div>
@@ -123,15 +123,15 @@
 
                   <div class="col-md-4 d-flex justify-content-md-end justify-content-start align-items-center">
                     <ng-container *ngIf="demande.status === 1; else statusLabel">
-                      <a [routerLink]="['/admin/demandeDetails', demande.iddemande]" class="btn btn-link text-primary px-3 mb-0" title="Voir plus">
+                      <!-- <a [routerLink]="['/admin/demandeDetails', demande.iddemande]" class="btn btn-link text-primary px-3 mb-0" title="Voir plus">
                         <div class="btn btn-primary btn-square p-3 d-flex align-items-center justify-content-center">
                           <i class="fas fa-eye text-white"></i>
                         </div>
-                      </a>
+                      </a> -->
                       <a (click)="openModal(demande.iddemande)" data-bs-toggle="modal" data-bs-target="#confirmationModal" class="btn btn-success btn-square text-white px-3 mx-2" title="Valider">
                         <i class="fas fa-check"></i>
                       </a>
-                      <a (click)="openModal(demande.iddemande)" data-bs-toggle="modal" data-bs-target="#refusModal" class="btn btn-danger btn-square text-white px-3 mx-2" title="Supprimer">
+                      <a (click)="openModal(demande.iddemande)" data-bs-toggle="modal" data-bs-target="#refusModal" class="btn btn-danger btn-square text-white px-3 mx-2" title="Refuser">
                         <i class="fas fa-trash"></i>
                       </a>
                       <a (click)="openModal(demande.iddemande)" data-bs-toggle="modal" data-bs-target="#infoRequestModal" class="btn btn-warning btn-square text-white px-3 mx-2" title="Demander Info">

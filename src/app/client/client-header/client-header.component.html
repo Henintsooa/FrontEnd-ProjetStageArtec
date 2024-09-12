@@ -15,13 +15,54 @@
     <div class="collapse navbar-collapse w-100 pt-3 pb-2 py-lg-0" id="navigation">
       <ul class="navbar-nav navbar-nav-hover mx-auto">
         <li class="nav-item dropdown dropdown-hover mx-2">
-          <a role="button" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center " id="dropdownMenuPages" data-bs-toggle="dropdown" aria-expanded="false">
+          <a [routerLink]="['/client/accueil']" role="button" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center " id="dropdownMenuPages" data-bs-toggle="dropdown" aria-expanded="false">
             Accueil
           </a>
         </li>
         <li class="nav-item dropdown dropdown-hover mx-2">
-          <a role="button" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center " id="dropdownMenuBlocks" data-bs-toggle="dropdown" aria-expanded="false">
+          <a role="button" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center" id="dropdownMenuBlocks" data-bs-toggle="dropdown" aria-expanded="false">
             Se déclarer
+            <img src="../assets/img/down-arrow-dark.svg" alt="down-arrow" class="arrow ms-1 d-lg-block d-none">
+            <img src="../assets/img/down-arrow-dark.svg" alt="down-arrow" class="arrow ms-1 d-lg-none d-block">
+          </a>
+          <div class="dropdown-menu dropdown-menu-animation dropdown-lg p-3 border-radius-xl mt-0 mt-lg-3" aria-labelledby="dropdownMenuBlocks">
+            <div class="row d-none d-lg-block">
+              <div class="col-12 px-4 py-2">
+                <div class="row">
+                  <div class="col-12 position-relative">
+                    <!-- Afficher les liens des formulaires dynamiquement par régime -->
+                    <div *ngFor="let regime of regimes">
+                      <p class="text-primary">{{ regime.nomregime }}</p>
+                      <div *ngFor="let formulaire of regime.formulaires">
+                        <a (click)="navigateToFormulaire(formulaire.idtypeformulaire)" class="dropdown-item border-radius-md">
+                          <span class="ps-3">{{ formulaire.nomFormulaire }}</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Responsive -->
+            <div class="d-lg-none">
+              <div *ngFor="let regime of regimes">
+                <p class="text-primary">{{ regime.nomregime }}</p>
+                <div *ngFor="let formulaire of regime.formulaires">
+                  <a (click)="navigateToFormulaire(formulaire.idtypeformulaire)" class="dropdown-item border-radius-md">
+                    {{ formulaire.nomFormulaire }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+
+
+
+        <li class="nav-item dropdown dropdown-hover mx-2">
+          <a role="button" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center " id="dropdownMenuBlocks" data-bs-toggle="dropdown" aria-expanded="false">
+            Mes declarations
             <img src=" ../assets/img/down-arrow-dark.svg  " alt="down-arrow" class="arrow ms-1 d-lg-block d-none">
             <img src="../assets/img/down-arrow-dark.svg" alt="down-arrow" class="arrow ms-1 d-lg-none d-block">
           </a>
@@ -52,14 +93,6 @@
               </a>
             </div>
           </div>
-        </li>
-
-        <li class="nav-item dropdown dropdown-hover mx-2">
-          <a role="button" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center " id="dropdownMenuAccount" data-bs-toggle="dropdown" aria-expanded="false">
-            Renouveller
-            <img src=" ../assets/img/down-arrow-dark.svg  " alt="down-arrow" class="arrow ms-1 d-lg-block d-none">
-            <img src="../assets/img/down-arrow-dark.svg" alt="down-arrow" class="arrow ms-1 d-lg-none d-block">
-          </a>
         </li>
         <li class="nav-item dropdown dropdown-hover mx-2 d-lg-none">
           <!-- Visible only on mobile (small and medium screens) -->
