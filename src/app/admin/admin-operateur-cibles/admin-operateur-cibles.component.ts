@@ -22,6 +22,13 @@ export class AdminOperateurCiblesComponent implements OnInit {
   selectedStatus: string = 'null';
   searchKeyword: string = '';
 
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+  totalItems: number = 0;
+  itemsPerPageOptions: number[] = [10, 25, 50, 100];
+  paginatedOperateurs: any[] = [];
+
+
   constructor(private sensibilisationService: SensibilisationService) { }
 
   ngOnInit(): void {
@@ -32,18 +39,31 @@ export class AdminOperateurCiblesComponent implements OnInit {
     this.sensibilisationService.getOperateursHistorique({ keyword, status }).subscribe(
       (data: any[]) => {
         this.operateurs = data;
+        this.totalItems = data.length; // Nombre total d'éléments
+        this.applyPagination(); // Appliquer la pagination après avoir récupéré les données
       },
       (error: any) => this.errorMessage = 'Erreur lors de la récupération des opérateurs'
     );
   }
 
+  applyPagination(): void {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedOperateurs = this.operateurs.slice(startIndex, endIndex);
+  }
 
   onSearch(): void {
     this.loadOperateurs(this.searchKeyword, this.selectedStatus);
   }
 
   onStatusChange(): void {
+    this.currentPage = 1; // Réinitialiser à la première page lors du changement de statut
     this.loadOperateurs(this.searchKeyword, this.selectedStatus);
+  }
+
+  onItemsPerPageChange(): void {
+    this.currentPage = 1; // Réinitialiser à la première page lors du changement du nombre d'éléments par page
+    this.applyPagination();
   }
 
   setDeleteId(id: number): void {
@@ -115,7 +135,16 @@ export class AdminOperateurCiblesComponent implements OnInit {
     });
   }
 
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages.length) {
+      this.currentPage = page;
+      this.applyPagination();
+    }
+  }
 
+  get totalPages(): number[] {
+    return Array(Math.ceil(this.totalItems / this.itemsPerPage)).fill(0).map((_, i) => i + 1);
+  }
 
 
 }

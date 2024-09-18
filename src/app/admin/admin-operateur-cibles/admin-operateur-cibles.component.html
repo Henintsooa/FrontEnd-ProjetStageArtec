@@ -111,68 +111,91 @@
           <div class="card-body px-0 pt-0 pb-2">
 
 
-            <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0">
-                <thead>
-                  <tr>
-                    <th *ngIf="selectedStatus === 'null'" class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">
-                      <input type="checkbox" (change)="toggleSelectAll()" [checked]="selectAllOperateurs">
-                    </th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Nom</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Email</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Adresse</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Regime</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Region</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Date Sensibilisation</th>
-                    <th *ngIf="selectedStatus === '1'" class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Date Déclaration</th>
-                    <th *ngIf="selectedStatus === 'null'" class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let operateur of operateurs">
-                    <td *ngIf="selectedStatus === 'null'" class="ps-4">
-                      <input type="checkbox" (change)="toggleSelectOperateur(operateur)" [checked]="selectedOperateurs.includes(operateur)">
-                    </td>
-                    <td class="ps-4 text-sm">{{ operateur.nom }}</td>
-                    <td class="text-sm">{{ operateur.email }}</td>
-                    <td class="text-sm">{{ operateur.adresse }}</td>
-                    <td class="text-sm">{{ operateur.nomregime }}</td>
-                    <td class="text-sm">{{ operateur.ville }}</td>
-                    <td [ngClass]="{
-                      'text': operateur.datesensibilisation | date:'dd/MM/yyyy HH:mm',
-                      'text-danger': !operateur.datesensibilisation
-                    }" class="text-sm">
-                      {{ operateur.datesensibilisation | date:'dd/MM/yyyy HH:mm' || 'Non sensibilisé' }}
-                    </td>
-                    <td *ngIf="selectedStatus === '1'" class="text-sm text-success">{{ operateur.dateconversion | date:'dd/MM/yyyy HH:mm'}}</td>
+            <div class="container mt-3">
+              <!-- Tableau des opérateurs -->
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th *ngIf="selectedStatus === 'null'" class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">
+                        <input type="checkbox" (change)="toggleSelectAll()" [checked]="selectAllOperateurs">
+                      </th>
+                      <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Nom</th>
+                      <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Email</th>
+                      <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Adresse</th>
+                      <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Regime</th>
+                      <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Region</th>
+                      <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Date Sensibilisation</th>
+                      <th *ngIf="selectedStatus === '1'" class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Date Déclaration</th>
+                      <th *ngIf="selectedStatus === 'null'" class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let operateur of paginatedOperateurs">
+                      <td *ngIf="selectedStatus === 'null'" class="ps-4">
+                        <input type="checkbox" (change)="toggleSelectOperateur(operateur)" [checked]="selectedOperateurs.includes(operateur)">
+                      </td>
+                      <td class="ps-4 text-sm">{{ operateur.nom }}</td>
+                      <td class="text-sm">{{ operateur.email }}</td>
+                      <td class="text-sm">{{ operateur.adresse }}</td>
+                      <td class="text-sm">{{ operateur.nomregime }}</td>
+                      <td class="text-sm">{{ operateur.ville }}</td>
+                      <td [ngClass]="{
+                        'text': operateur.datesensibilisation | date:'dd/MM/yyyy HH:mm',
+                        'text-danger': !operateur.datesensibilisation
+                      }" class="text-sm">
+                        {{ operateur.datesensibilisation | date:'dd/MM/yyyy HH:mm' || 'Non sensibilisé' }}
+                      </td>
+                      <td *ngIf="selectedStatus === '1'" class="text-sm text-success">{{ operateur.dateconversion | date:'dd/MM/yyyy HH:mm'}}</td>
+                      <td *ngIf="selectedStatus === 'null'" class="text-sm">
+                        <div class="d-flex align-items-center">
+                          <a [routerLink]="['/admin/operateur', operateur.idoperateurcible]" class="text-sm text-primary me-3"
+                          [ngStyle]="{
+                            'pointer-events': selectedOperateurs.length > 0 ? 'none' : 'auto',
+                            'opacity': selectedOperateurs.length > 0 ? '0.5' : '1',
+                            'cursor': selectedOperateurs.length > 0 ? 'not-allowed' : 'pointer'
+                          }">
+                            <i class="fas fa-edit"></i>
+                          </a>
+                          <a href="#" class="text-sm text-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal" (click)="setDeleteId(operateur.idoperateurcible)"
+                          [ngStyle]="{
+                            'pointer-events': selectedOperateurs.length > 0 ? 'none' : 'auto',
+                            'opacity': selectedOperateurs.length > 0 ? '0.5' : '1',
+                            'cursor': selectedOperateurs.length > 0 ? 'not-allowed' : 'pointer'
+                          }">
+                            <i class="fas fa-trash"></i>
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr *ngIf="paginatedOperateurs.length === 0">
+                      <td colspan="8" class="text-center text-sm">Aucun opérateur disponible.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
-                    <td *ngIf="selectedStatus === 'null'" class="text-sm">
-                      <div class="d-flex align-items-center">
-                        <a [routerLink]="['/admin/operateur', operateur.idoperateurcible]" class="text-sm text-primary me-3"
-                        [ngStyle]="{
-                          'pointer-events': selectedOperateurs.length > 0 ? 'none' : 'auto',
-                          'opacity': selectedOperateurs.length > 0 ? '0.5' : '1',
-                          'cursor': selectedOperateurs.length > 0 ? 'not-allowed' : 'pointer'
-                        }">
-                          <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="#" class="text-sm text-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal" (click)="setDeleteId(operateur.idoperateurcible)"
-                        [ngStyle]="{
-                          'pointer-events': selectedOperateurs.length > 0 ? 'none' : 'auto',
-                          'opacity': selectedOperateurs.length > 0 ? '0.5' : '1',
-                          'cursor': selectedOperateurs.length > 0 ? 'not-allowed' : 'pointer'
-                        }">
-                          <i class="fas fa-trash"></i>
-                        </a>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr *ngIf="operateurs.length === 0">
-                    <td colspan="8" class="text-center text-sm">Aucun opérateur disponible.</td>
-                  </tr>
-                </tbody>
-              </table>
+              <!-- Pagination et Sélecteur d'éléments par page -->
+              <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mt-4">
+                  <li class="page-item" [ngClass]="{'disabled': currentPage === 1}">
+                    <a class="page-link" (click)="changePage(currentPage - 1)" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                  <li class="page-item" *ngFor="let page of totalPages" [ngClass]="{'active': page === currentPage}">
+                    <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+                  </li>
+                  <li class="page-item" [ngClass]="{'disabled': currentPage === totalPages.length}">
+                    <a class="page-link" (click)="changePage(currentPage + 1)" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                </ul>
+
+              </nav>
             </div>
+
           </div>
         </div>
       </div>

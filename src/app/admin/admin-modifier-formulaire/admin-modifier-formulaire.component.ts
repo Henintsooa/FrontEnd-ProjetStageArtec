@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, Abs
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormulaireService } from '../../services/formulaire.service';
 import { CommonModule } from '@angular/common';
+import { RegimeService } from '../../services/regime.service';
 
 interface Question {
   textquestion: string;
@@ -37,19 +38,23 @@ export class ModifierFormulaireComponent implements OnInit {
   newCategoryResponses = 1;
   showModal = false;
   selectedFile: File | null = null;
+  regimes: any;
+
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private formulaireService: FormulaireService
+    private formulaireService: FormulaireService,
+    private regimeService: RegimeService
   ) {
     this.editForm = this.fb.group({
-      type: [null, Validators.required],
       nom: ['', Validators.required],
       description: ['', Validators.required],
       questions: this.fb.array([]),
-      image: [null]
+      image: [null],
+      anneevalidite: [],
+      idregime: ['', Validators.required],
     });
   }
 
@@ -58,16 +63,31 @@ export class ModifierFormulaireComponent implements OnInit {
     this.loadFormulaireData();
     this.loadTypeQuestions();
     this.loadCategoriesQuestions();
+    this.loadRegimes();
+
+  }
+
+  loadRegimes(): void {
+    this.regimeService.getRegimes().subscribe({
+      next: (response: any) => {
+        this.regimes = response;
+      },
+      error: (error: any) => {
+        console.error('Erreur lors du chargement des villes', error);
+      }
+    });
   }
 
   loadFormulaireData() {
     this.formulaireService.getFormulaireById(this.formulaireId).subscribe(data => {
       console.log(this.formulaireId);
       this.editForm.patchValue({
-        type: data.nomtypeformulaire,
         nom: data.nomformulaire,
-        description: data.descriptiontypeformulaire
+        description: data.descriptiontypeformulaire,
+        anneevalidite: data.anneevalidite,
+        idregime: data.idregime
       });
+      console.log("Chargement du formulaire", data);
       this.setQuestions(data.questions);
     });
   }
@@ -218,7 +238,10 @@ export class ModifierFormulaireComponent implements OnInit {
       );
 
       const formData = new FormData();
-      formData.append('type_formulaire_nom', formValue.type);
+      if (formValue.anneevalidite) {
+        formData.append('anneevalidite', formValue.anneevalidite.toString());
+      }
+      formData.append('idregime', formValue.idregime.toString());
       formData.append('description', formValue.description);
       formData.append('nom_formulaire', formValue.nom);
       formData.append('date_creation', new Date().toISOString().split('T')[0]);

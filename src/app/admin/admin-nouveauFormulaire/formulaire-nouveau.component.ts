@@ -4,6 +4,7 @@ import { FormulaireService } from '../../services/formulaire.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { RegimeService } from '../../services/regime.service';
 
 @Component({
   selector: 'app-formulaire-nouveau',
@@ -26,17 +27,20 @@ export class NouveauFormulaireComponent implements OnInit {
   selectedImage: File | null = null;
   imageUrl: any;
 
-  constructor(private fb: FormBuilder, private formulaireService: FormulaireService) {
+  regimes: any[] = [];
+
+  constructor(private fb: FormBuilder, private formulaireService: FormulaireService, private regimeService: RegimeService) {
     this.registrationForm = this.fb.group({
-      type: ['', Validators.required],
       description: ['', Validators.required],
       nom: ['', Validators.required],
       image: [null],
+      idregime: ['', [Validators.required]],
       questions: this.fb.array([])
     });
   }
 
   ngOnInit(): void {
+    this.loadRegimes();
     this.formulaireService.getTypeQuestions().subscribe(data => {
       this.typeQuestions = data;
     });
@@ -46,6 +50,17 @@ export class NouveauFormulaireComponent implements OnInit {
       this.categoriesQuestions.forEach(category => {
         this.addCategoryQuestions(category.idcategoriequestion);
       });
+    });
+  }
+
+  loadRegimes(): void {
+    this.regimeService.getRegimes().subscribe({
+      next: (response: any) => {
+        this.regimes = response;
+      },
+      error: (error: any) => {
+        console.error('Erreur lors du chargement des villes', error);
+      }
     });
   }
 
@@ -111,7 +126,10 @@ export class NouveauFormulaireComponent implements OnInit {
       );
 
       const formData = new FormData();
-      formData.append('type_formulaire_nom', formValue.type);
+      if (formValue.anneevalidite) {
+        formData.append('anneevalidite', formValue.anneevalidite.toString());
+      }
+      formData.append('idregime', formValue.idregime.toString());
       formData.append('description', formValue.description);
       formData.append('nom_formulaire', formValue.nom);
       formData.append('date_creation', new Date().toISOString().split('T')[0]);
@@ -127,6 +145,7 @@ export class NouveauFormulaireComponent implements OnInit {
       }
 
       this.sendForm(formData);
+      console.log('Form values:', formValue);
     } else {
       // Gestion des erreurs de validation du formulaire
       this.errors = [];

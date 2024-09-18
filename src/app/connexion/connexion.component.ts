@@ -43,7 +43,7 @@ export class ConnexionComponent {
           if (response.status === 200) {
             // Stocker le token et rediriger l'utilisateur
             localStorage.setItem('token', response.token);
-            console.log('Connexion réussie', response);
+            // console.log('Connexion réussie', response);
             if (response.role === 'admin') {
               this.router.navigate(['/admin/dashboard']); // Redirection pour les administrateurs
             } else if (response.role === 'user') {
@@ -77,7 +77,7 @@ export class ConnexionComponent {
       const email = this.forgotPasswordForm.value.email;
       this.authService.sendPasswordResetLink(email).subscribe(
         response => {
-          console.log('Réponse reçue :', response);
+          // console.log('Réponse reçue :', response);
           if (response.status === 200) {
             this.success = response.body?.message ||'Un lien de réinitialisation a été envoyé à votre adresse email. Veuillez consulter votre boîte de reception.';
           } else {

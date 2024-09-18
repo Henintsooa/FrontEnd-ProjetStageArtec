@@ -59,10 +59,11 @@
               <thead>
                 <tr>
                   <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Date Demande</th>
-                  <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Régime</th>
-                  <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Activité</th>
-                  <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Durée de Validité</th>
-                  <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Status</th>
+                  <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Type Demande</th>
+                  <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Régime</th>
+                  <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Activité</th>
+                  <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Durée de Validité</th>
+                  <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -71,6 +72,13 @@
                     <div class="d-flex px-2 py-1">
                       <div class="d-flex flex-column justify-content-center">
                         <a [routerLink]="['/operateur/declarations', demande.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ demande.datedemande | date:'dd/MM/yyyy'  }}</a>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="ps-4 text-sm">
+                    <div class="d-flex px-2 py-1">
+                      <div class="d-flex flex-column justify-content-center">
+                        <a [routerLink]="['/operateur/declarations', demande.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ demande.typedemande }}</a>
                       </div>
                     </div>
                   </td>

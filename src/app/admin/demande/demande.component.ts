@@ -31,6 +31,12 @@ export class DemandeComponent implements OnInit {
 
   regions: any[] = [];
 
+  paginatedDemandes: any[] = [];
+  itemsPerPage: number = 10; // Nombre d'éléments par page
+  itemsPerPageOptions: number[] = [10, 25, 50, 100];
+
+  currentPage: number = 1;
+
   constructor(private demandeService: DemandeService, private route: ActivatedRoute,private villeService: VilleService) {}
 
   ngOnInit(): void {
@@ -147,9 +153,30 @@ export class DemandeComponent implements OnInit {
         this.selectedStatus === '' ? demande.status === null : demande.status == this.selectedStatus
       );
     }
+    this.paginateDemandes();
   }
 
+  paginateDemandes(): void {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedDemandes = this.filteredDemandes.slice(startIndex, endIndex);
+  }
 
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages.length) {
+      this.currentPage = page;
+      this.paginateDemandes();
+    }
+  }
+
+  onItemsPerPageChange(): void {
+    this.currentPage = 1; // Réinitialiser à la première page
+    this.paginateDemandes();
+  }
+
+  get totalPages(): number[] {
+    return Array(Math.ceil(this.filteredDemandes.length / this.itemsPerPage)).fill(0).map((_, i) => i + 1);
+  }
 
 
   openModal(iddemande: number): void {

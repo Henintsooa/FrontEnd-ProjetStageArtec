@@ -40,7 +40,7 @@
               <i class="fa fa-bell cursor-pointer" [ngClass]="{'text-primary': dropdownOpen}"></i>
               <span *ngIf="unreadCount > 0" class="badge bg-danger">{{ unreadCount }}</span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton" style="min-width: 300px; max-width: 400px; max-height: 400px; overflow-y: auto;">
+            <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4 overflow-auto" aria-labelledby="dropdownMenuButton" style="min-width: 300px; max-width: 400px; max-height: 400px;">
               <!-- Header Notifications -->
               <div class="mb-3">
                 <li class="dropdown-header bg-primary text-white fw-bold border-radius-sm">Notifications</li>

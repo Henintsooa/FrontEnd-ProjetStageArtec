@@ -80,23 +80,34 @@
           <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
             <div class="row mb-3">
               <div class="col-md-6">
-                <label for="type" class="form-label">Type de l'activité<span class="text-danger">*</span></label>
-                <input formControlName="type" id="type" type="text" class="form-control" placeholder="Type de l'activité" required>
+                <label for="nom" class="form-label">Nom de l'activité<span class="text-danger"> *</span></label>
+                <input formControlName="nom" id="nom" type="text" class="form-control" placeholder="Nom de l'activité" required>
               </div>
               <div class="col-md-6">
-                <label for="nom" class="form-label">Nom de l'activité<span class="text-danger">*</span></label>
-                <input formControlName="nom" id="nom" type="text" class="form-control" placeholder="Nom de l'activité" required>
+                <label for="desc" class="form-label">Description<span class="text-danger"> *</span></label>
+                <input formControlName="description" id="desc" type="text" class="form-control" placeholder="Description de l'activité" required>
               </div>
             </div>
             <div class="row mb-3">
               <div class="col-md-6">
-                <label for="desc" class="form-label">Description<span class="text-danger">*</span></label>
-                <input formControlName="description" id="desc" type="text" class="form-control" placeholder="Description de l'activité" required>
+                <label for="idregime" class="form-label">Régime<span class="text-danger"> *</span></label>
+                <select formControlName="idregime" id="idregime" class="form-select">
+                  <option value="" disabled>Choisissez un régime</option>
+                  <option *ngFor="let regime of regimes" [value]="regime.idregime">{{ regime.nom }}</option>
+                </select>
+                <div *ngIf="registrationForm.get('idregime')?.invalid && (registrationForm.get('idregime')?.touched)" class="text-danger mt-1">
+                  <small>Le champ régime est obligatoire.</small>
+                </div>
               </div>
-
               <div class="col-md-6">
-                <label for="image" class="form-label">Photo représentative<span class="text-danger">*</span></label>
-                <input formControlName="image" id="image" type="file" class="form-control" (change)="onFileChange($event)" required>
+                <label for="anneevalidite" class="form-label">Années de validité</label>
+                <input  name="anneevalidite" type="number" class="form-control" placeholder="Année de validité" required>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="image" class="form-label">Photo<span class="text-danger"> *</span></label>
+                <input formControlName="image" id="image" type="file" class="form-control" (change)="onFileChange($event)" accept="image/*" required>
               </div>
             </div>
 
