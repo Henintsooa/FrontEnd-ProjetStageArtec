@@ -1,9 +1,9 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg position-absolute top-0 z-index-3 w-100 shadow-none my-3  navbar-transparent mt-4">
   <div class="container">
-    <a class="navbar-brand font-weight-bolder ms-lg-0 ms-3 text-white" href="../pages/dashboards/default.html">
+    <a class="navbar-brand font-weight-bolder ms-lg-0 ms-3 text-white" [routerLink]="['/operateur/']">
       <!-- ARTEC -->
-      <img src="../assets/img/logo_artec_blanc.png" class="navbar-brand-img"  alt="main_logo" style="width: 125px;">
+      <img src="../assets/img/logo_artec_blanc.png" class="navbar-brand-img"  alt="main_logo" style="width: 140px;">
     </a>
     <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon mt-2">
@@ -14,12 +14,12 @@
     </button>
     <div class="collapse navbar-collapse w-100 pt-3 pb-2 py-lg-0" id="navigation">
       <ul class="navbar-nav navbar-nav-hover mx-auto">
-        <li class="nav-item dropdown dropdown-hover mx-2">
-          <a [routerLink]="['/client/accueil']" role="button" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center " id="dropdownMenuPages" data-bs-toggle="dropdown" aria-expanded="false">
+        <li class="nav-item dropdown dropdown-hover mx-1">
+          <a [routerLink]="['/operateur/accueil']" role="button" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center " id="dropdownMenuPages" data-bs-toggle="dropdown" aria-expanded="false">
             Accueil
           </a>
         </li>
-        <li class="nav-item dropdown dropdown-hover mx-2">
+        <li class="nav-item dropdown dropdown-hover mx-1">
           <a role="button" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center" id="dropdownMenuBlocks" data-bs-toggle="dropdown" aria-expanded="false">
             Se déclarer
             <img src="../assets/img/down-arrow-dark.svg" alt="down-arrow" class="arrow ms-1 d-lg-block d-none">
@@ -32,7 +32,7 @@
                   <div class="col-12 position-relative">
                     <!-- Afficher les liens des formulaires dynamiquement par régime -->
                     <div *ngFor="let regime of regimes">
-                      <p class="text-primary">{{ regime.nomregime }}</p>
+                      <p class="text-sm font-weight-bold text-primary">{{ regime.nomregime }}</p>
                       <div *ngFor="let formulaire of regime.formulaires">
                         <a (click)="navigateToFormulaire(formulaire.idtypeformulaire)" class="dropdown-item border-radius-md">
                           <span class="ps-3">{{ formulaire.nomFormulaire }}</span>
@@ -46,7 +46,7 @@
             <!-- Responsive -->
             <div class="d-lg-none">
               <div *ngFor="let regime of regimes">
-                <p class="text-primary">{{ regime.nomregime }}</p>
+                <p class="text-sm font-weight-bold text-primary">{{ regime.nomregime }}</p>
                 <div *ngFor="let formulaire of regime.formulaires">
                   <a (click)="navigateToFormulaire(formulaire.idtypeformulaire)" class="dropdown-item border-radius-md">
                     {{ formulaire.nomFormulaire }}
@@ -60,41 +60,28 @@
 
 
 
-        <li class="nav-item dropdown dropdown-hover mx-2">
-          <a role="button" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center " id="dropdownMenuBlocks" data-bs-toggle="dropdown" aria-expanded="false">
-            Mes declarations
-            <img src=" ../assets/img/down-arrow-dark.svg  " alt="down-arrow" class="arrow ms-1 d-lg-block d-none">
-            <img src="../assets/img/down-arrow-dark.svg" alt="down-arrow" class="arrow ms-1 d-lg-none d-block">
+        <li class="nav-item dropdown dropdown-hover mx-1">
+          <a [routerLink]="['/operateur/declarations']" role="button" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center " id="dropdownMenuBlocks" data-bs-toggle="dropdown" aria-expanded="false">
+            Mes déclarations
           </a>
-          <div class="dropdown-menu dropdown-menu-animation dropdown-lg p-3 border-radius-xl mt-0 mt-lg-3" aria-labelledby="dropdownMenuEcommerce">
-            <div class="row d-none d-lg-block">
-              <div class="col-12 px-4 py-2">
-                <div class="row">
-                  <div class="col-12 position-relative">
 
-                    <a href="../pages/ecommerce/orders/list.html" class="dropdown-item border-radius-md">
-                      <span class="ps-3">Equipement terminaux ou services auxiliaires</span>
-                    </a>
-                    <a href="../pages/pages/orders/details.html" class="dropdown-item border-radius-md">
-                      <span class="ps-3">Fourniture de service de telecommunication</span>
-                    </a>
-
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- responsive -->
-            <div class="d-lg-none">
-              <a href="../pages/ecommerce/orders/list.html" class="dropdown-item border-radius-md">
-                Order List
-              </a>
-              <a href="../pages/pages/orders/details.html" class="dropdown-item border-radius-md">
-                Order Details
-              </a>
-            </div>
-          </div>
         </li>
-        <li class="nav-item dropdown dropdown-hover mx-2 d-lg-none">
+
+        <li class="nav-item dropdown dropdown-hover mx-1">
+          <a [routerLink]="['/operateur/contact']" role="button" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center " id="dropdownMenuBlocks" data-bs-toggle="dropdown" aria-expanded="false">
+            Contact
+          </a>
+
+        </li>
+
+        <li class="nav-item dropdown dropdown-hover mx-2" *ngIf="renewals.length > 0">
+          <a [routerLink]="['/operateur/renouvellements']" role="button" class="btn btn-sm bg-gradient-warning btn-round mb-0 me-1 nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center" id="dropdownMenuBlocks" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="text-transform-custom font-weight-bolder">Renouvellement</span>
+          </a>
+        </li>
+
+
+        <li class="nav-item dropdown dropdown-hover mx-1 d-lg-none">
           <!-- Visible only on mobile (small and medium screens) -->
           <a href="javascript:;" (click)="logout()" class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center" id="dropdownMenuAccount" aria-expanded="false">
             Déconnexion
@@ -104,8 +91,9 @@
       </ul>
       <ul class="navbar-nav d-lg-block d-none">
         <li class="nav-item">
+          <a class="text-white font-weight-bolder text-sm me-3"><i class="fas fa-user me-2"></i>{{ operateur?.nom }}</a>
           <a href="javascript:;" (click)="logout()" class="btn btn-sm  bg-gradient-secondary  btn-round mb-0 me-1">
-            <i class="fa fa-sign-out-alt fa-2x me-sm-1"></i>
+            <i class="fa fa-sign-out-alt me-sm-1"></i>
             <span class="d-sm-inline d-none">Déconnexion</span>
           </a>
         </li>
@@ -113,4 +101,12 @@
     </div>
   </div>
 </nav>
+<style>
+  .text-transform-custom {
+  text-transform: lowercase; /* Met tout le texte en minuscules */
+  }
 
+  .text-transform-custom::first-letter {
+    text-transform: uppercase; /* Met uniquement la première lettre en majuscule */
+  }
+</style>

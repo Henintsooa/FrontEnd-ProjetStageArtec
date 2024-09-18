@@ -1,0 +1,212 @@
+<section class="header">
+  <div class="page-header align-items-start min-vh-30 pt-3 pb-5 m-3 border-radius-sm" style="background-image: url('../assets/img/curved-images/artecBackground.jpg');">
+    <span class="mask bg-gradient-dark opacity-2"></span>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-5 text-center mx-auto">
+          <h1 class="text-white mb-2 mt-8">Détails déclaration</h1>
+          <p class="text-lead text-white">Ici se trouvent les détails de la déclaration</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Informations sur la déclaration -->
+<div class="container mt-4">
+  <!-- Lien de retour -->
+  <div class="mb-4">
+    <button (click)="goBack()" class="btn btn-secondary">
+      <i class="fas fa-arrow-left"></i> Retour
+    </button>
+  </div>
+
+  <div class="mb-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <!-- Colonne gauche avec les détails -->
+            <div>
+              <h4 class="text-primary mb-3" *ngIf="details[0]">{{ details[0].nomtypeformulaire }}</h4>
+              <p class="text-muted mb-2">
+                <i class="fas fa-map-marker-alt me-2"></i>
+                <span class="text-sm" *ngIf="details[0]">{{ details[0].nomville }}</span>
+              </p>
+              <p class="text-muted mb-2">
+                <span class="text-sm font-weight-bold">Opérateur: </span>
+                <span class="text-sm" *ngIf="details[0]">{{ details[0].nomoperateur }}</span>
+              </p>
+              <p class="text-muted mb-2">
+                <span class="text-sm font-weight-bold">Adresse: </span>
+                <span class="text-sm" *ngIf="details[0]">{{ details[0].adresse }}</span>
+              </p>
+              <p class="text-muted">
+                <span class="text-sm font-weight-bold">Date de Demande: </span>
+                <span class="text-sm" *ngIf="details[0]">{{ details[0].datedemande | date:'dd/MM/yyyy' }}</span>
+              </p>
+            </div>
+
+            <!-- Centre avec les dates de déclaration et d'expiration -->
+            <div class="d-flex flex-column align-items-center mx-5 mt-auto">
+              <div *ngIf="hasDeclarationDate();">
+                <p class="text-muted">
+                  <span class="text-sm font-weight-bold">Date de Déclaration: </span>
+                  <span class="text-sm text-success font-weight-bold ms-xs-2" *ngIf="details[0]">{{ details[0].datedeclaration | date: 'dd/MM/yyyy' }}</span>
+                </p>
+
+                <p class="text-muted" *ngIf="details[0].dateexpiration">
+                  <span class="text-sm font-weight-bold">Date d'expiration: </span>
+                  <span class="text-sm text-danger font-weight-bold ms-xs-2">{{ details[0].dateexpiration | date: 'dd/MM/yyyy' }}</span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Colonne droite avec le bouton PDF et le statut en dessous -->
+            <div class="d-flex flex-column align-items-end mt-auto">
+              <button class="btn btn-primary mb-3" (click)="exportPdf(details[0].iddemande)">
+                <i class="fas fa-file-pdf me-2"></i> Télécharger PDF
+              </button>
+
+              <!-- Bouton de statut en bas -->
+              <div
+                class="btn btn-xl"
+                [ngClass]="{
+                  'bg-gradient-secondary': details[0].status === 1,
+                  'bg-gradient-warning': details[0].status === null,
+                  'bg-gradient-danger': details[0].status === 0,
+                  'bg-gradient-primary': details[0].status === 2
+                }"
+              *ngIf="details[0]" >
+                {{ getStatusLabel(details[0].status) }}
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h6 class="text-white">Renseignements sur l’opérateur</h6>
+          <button type="button" class="btn btn-box-tool btn-sm text-white" (click)="toggleCollapseStatic()">
+            <i class="fa" [ngClass]="{'fa-minus': !isCollapsedStatic, 'fa-plus': isCollapsedStatic}"></i>
+          </button>
+        </div>
+        <div [ngClass]="{'collapse': isCollapsedStatic}" class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="nomoperateur" class="form-label">Nom de l'opérateur :</label>
+              <p *ngIf="details[0]">{{ details[0].nomoperateur }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="email" class="form-label">Email de l'opérateur :</label>
+              <p *ngIf="details[0]">{{ details[0].email }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="adresseoperateur" class="form-label">Adresse :</label>
+              <p *ngIf="details[0]">{{ details[0].adresse }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="idville" class="form-label">Ville :</label>
+              <p *ngIf="details[0]">{{ details[0].nomville }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="telephone" class="form-label">Téléphone :</label>
+              <p *ngIf="details[0]">{{ details[0].telephone }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="telecopie" class="form-label">Télécopie :</label>
+              <p *ngIf="details[0]">{{ details[0].telecopie }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="idstructurejuridique" class="form-label">Structure Juridique :</label>
+              <p *ngIf="details[0]">{{ details[0].nomstructurejuridique }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <ng-container *ngFor="let category of categories; let idx = index;">
+        <div class="card mb-4">
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h6 class="text-white">{{ category.name }}</h6>
+            <button type="button" class="btn btn-box-tool btn-sm text-white"
+                (click)="toggleCollapse(idx)" [attr.aria-expanded]="!isCollapsed[idx]">
+                <i class="fa" [ngClass]="{'fa-minus': !isCollapsed[idx], 'fa-plus': isCollapsed[idx]}"></i>
+            </button>
+          </div>
+          <div class="card-body" *ngIf="!isCollapsed[idx]">
+            <div class="row">
+              <ng-container *ngFor="let detail of category.questions">
+                <div class="col-md-6 mb-3">
+                  <div class="form-group">
+                    <label [for]="detail.textquestion">{{ detail.textquestion }} :</label>
+                    <ng-container [ngSwitch]="detail.typequestion">
+                      <ng-container *ngSwitchCase="'text'">
+                        <p *ngIf="detail.textereponse">
+                          {{ detail.textereponse }}
+                        </p>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'number'">
+                        <p *ngIf="detail.nombrereponse">
+                          {{ detail.nombrereponse }}
+                        </p>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'file'">
+                        <p *ngIf="detail.filereponse">
+                          <a [href]="'http://127.0.0.1:8000/' + detail.filereponse" target="_blank">{{ detail.filereponse }}</a>
+                        </p>
+                      </ng-container>
+                      <ng-container *ngSwitchDefault>
+                        <p>Aucune réponse disponible</p>
+                      </ng-container>
+                    </ng-container>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="card mb-4" *ngIf="documentssupplementaires.length > 0">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h6 class="text-white">Documents supplémentaires</h6>
+          <button type="button" class="btn btn-box-tool btn-sm text-white"
+                  (click)="toggleCollapseDoc()"
+                  [attr.aria-expanded]="!isCollapsedDoc">
+            <i class="fa" [ngClass]="{'fa-minus': !isCollapsedDoc, 'fa-plus': isCollapsedDoc}"></i>
+          </button>
+        </div>
+        <div class="card-body" *ngIf="!isCollapsedDoc">
+          <div class="row">
+            <div class="col-md-6 mb-3" *ngFor="let doc of documentssupplementaires">
+              <div class="form-group">
+                <label>{{ doc.nomdocument }} :</label>
+                <p>
+                  <a [href]="'http://127.0.0.1:8000/' + doc.filesupplementaire" target="_blank">{{ doc.filesupplementaire }}</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- Bouton Retour en haut de la page -->
+<a class="btn btn-primary position-fixed bottom-0 end-0 m-3" (click)="scrollToTop()">
+  <i class="fas fa-arrow-up"></i>
+</a>

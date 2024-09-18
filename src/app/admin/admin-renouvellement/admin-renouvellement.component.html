@@ -1,0 +1,103 @@
+<section class="min-vh-100 mb-8">
+  <div class="container">
+    <div class="mb-4">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+          <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
+          <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Demandes</li>
+        </ol>
+        <h6 class="font-weight-bolder mb-0">Liste des Renouvellements</h6>
+      </nav>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <form (ngSubmit)="onSearch()" class="d-flex">
+        <div class="input-group me-2">
+          <span class="input-group-text"><i class="fas fa-search" aria-hidden="true"></i></span>
+          <input type="text" class="form-control" name="keyword" [(ngModel)]="keyword" placeholder="Opérateur, Mots clés, ..." (keyup.enter)="onSearch()" />
+        </div>
+      </form>
+
+      <div class="filter-status ms-2">
+        <select class="form-control" name="isRenewed" [(ngModel)]="isRenewed" (change)="onFilterChange(isRenewed)">
+          <option value="pas_fait">Filtrer par (À Renouveler)</option>
+          <option value="fait">Filtrer par (Notifiés)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mb-2 mt-2">
+      <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+      <div *ngIf="errorMessage" class="alert alert-warning">{{ errorMessage }}</div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-4">
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h6 class="text-white mb-0">Liste des Renouvellements</h6>
+            <a href=""
+               (click)="notifySelectedOperators($event)"
+               [ngClass]="{
+                 'btn-warning': selectedRenewals.length > 0,
+                  'btn-secondary': selectedRenewals.length === 0,
+                  'btn-sm': true
+               }"
+               class="btn text-nowrap">
+              <i class="fa fa-envelope me-1"></i>
+              <span>Notifier opérateurs</span>
+            </a>
+          </div>
+
+          <div class="card-body px-0 pt-0 pb-2">
+
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">
+                      <input type="checkbox" (change)="toggleSelectAllRenewals()" [checked]="selectAllRenewals">
+                    </th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Opérateur</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Email</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Déclaration</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Date d'Expiration</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Date de Notification</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let renewal of renewals">
+                    <td class="ps-4">
+                      <input type="checkbox" (change)="toggleSelectRenewal(renewal)" [checked]="selectedRenewals.includes(renewal)">
+                    </td>
+                    <td class="ps-4 text-sm">
+                      <a [routerLink]="['/admin/demandeDetails', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.nomoperateur }}</a>
+                    </td>
+                    <td class="ps-2 text-sm">
+                      <a [routerLink]="['/admin/demandeDetails', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.email }}</a>
+                    </td>
+                    <td class="ps-4 text-sm">
+                      <a [routerLink]="['/admin/demandeDetails', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.nomtypeformulaire }}</a>
+                    </td>
+                    <td class="ps-4 text-sm">
+                      <a [routerLink]="['/admin/demandeDetails', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.dateexpiration | date:'dd/MM/yyyy' }}</a>
+                    </td>
+                    <td class="ps-4 text-sm" *ngIf="renewal.datenotification">
+                      <a [routerLink]="['/admin/demandeDetails', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.datenotification | date:'dd/MM/yyyy HH:mm' }}</a>
+                    </td>
+                    <td class="ps-4 text-sm" *ngIf="!renewal.datenotification">
+                      <div class="btn btn bg-gradient-warning" style="margin: auto;">Non renouvelé</div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="renewals.length === 0">
+                    <td colspan="5" class="text-center text-sm">Aucun renouvellement trouvé.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</div>

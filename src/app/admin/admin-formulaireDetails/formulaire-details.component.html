@@ -10,7 +10,7 @@
 
   <!-- Lien de retour -->
   <div class="mb-4">
-    <a [routerLink]="['/admin/formulaire']" class="btn btn-secondary">
+    <a [routerLink]="['/admin/formulaires']" class="btn btn-secondary">
       <i class="fas fa-arrow-left"></i> Retour
     </a>
   </div>
@@ -19,7 +19,7 @@
     <div class="col-12">
       <!-- Carte pour l'image de fond -->
       <div class="row mb-5">        <!-- Ajuster la largeur pour correspondre -->
-        <div class="page-header min-height-300 border-radius-xl mt-4" [style.backgroundImage]="'url(' + imgSrc + ')'" style="background-position: center;">
+        <div class="page-header min-height-300 border-radius-sm mt-4" [style.backgroundImage]="'url(' + imgSrc + ')'" style="background-position: center;">
           <span class="mask bg-gradient-primary opacity-1"></span>
         </div>
         <div class="card card-body blur shadow-blur mx-4 mt-n6 overflow-hidden text-center">
@@ -77,13 +77,13 @@
                       </small>
                     </div>
                     <div class="col-md-6 mb-3">
-                      <label for="idville" class="form-label">Ville <span class="text-danger"></span></label>
+                      <label for="idville" class="form-label">Région <span class="text-danger"></span></label>
                       <select formControlName="idville" id="idville" class="form-control">
-                        <option value="" disabled selected>Choisissez une ville</option>
+                        <option value="" disabled selected>Choisissez une région</option>
                         <option *ngFor="let ville of villes" [value]="ville.idville">{{ ville.nom }}</option>
                       </select>
                       <small *ngIf="registrationForm.get('idville')?.errors && registrationForm.get('idville')?.touched" class="text-danger">
-                        <small *ngIf="registrationForm.get('idville')?.hasError('required')">Le champ ville est obligatoire.</small>
+                        <small *ngIf="registrationForm.get('idville')?.hasError('required')">Le champ région est obligatoire.</small>
                       </small>
                     </div>
                     <div class="col-md-6 mb-3">
@@ -134,7 +134,12 @@
                     <div class="form-group">
                       <label [for]="question.id + '-' + idx">{{ question.textquestion }}</label>
                       <ng-container [ngSwitch]="question.typequestion">
+                        <ng-container *ngSwitchCase="'file'">
                         <input *ngSwitchCase="'file'" [id]="question.id + '-' + idx" type="file" class="form-control" [attr.required]="question.questionobligatoire ? true : null" />
+                        <small class="form-text text-muted">
+                          Format accepté : PDF | Taille maximale : 4 Mo
+                        </small>
+                        </ng-container>
                         <input *ngSwitchCase="'text'" [id]="question.id + '-' + idx" type="text" class="form-control" [attr.required]="question.questionobligatoire ? true : null" />
                         <input *ngSwitchCase="'number'" [id]="question.id + '-' + idx" type="number" class="form-control" [attr.required]="question.questionobligatoire ? true : null" />
                         <select *ngSwitchCase="'select'" [id]="question.id + '-' + idx" class="form-control" [attr.required]="question.questionobligatoire ? true : null">
@@ -154,3 +159,7 @@
     </div>
   </div>
 </div>
+<!-- Bouton Retour en haut de la page -->
+<a  class="btn btn-primary position-fixed bottom-0 end-0 m-2" (click)="scrollToTop()">
+  <i class="fas fa-arrow-up"></i>
+</a>

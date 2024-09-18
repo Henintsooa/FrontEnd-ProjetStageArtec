@@ -1,5 +1,5 @@
 <section class="header">
-  <div class="page-header align-items-start min-vh-30 pt-3 pb-5 m-3 border-radius-lg" style="background-image: url('../assets/img/curved-images/artecBackground.jpg');">
+  <div class="page-header align-items-start min-vh-30 pt-3 pb-5 m-3 border-radius-sm" style="background-image: url('../assets/img/curved-images/artecBackground.jpg');">
     <span class="mask bg-gradient-dark opacity-2"></span>
     <div class="container">
       <div class="row justify-content-center">
@@ -33,9 +33,9 @@
 <div class="container mt-4">
   <!-- Lien de retour -->
   <div class="mb-4">
-    <a [routerLink]="['/client/accueil']" class="btn btn-secondary">
+    <button (click)="goBack()" class="btn btn-secondary">
       <i class="fas fa-arrow-left"></i> Retour
-    </a>
+    </button>
   </div>
 
   <form [formGroup]="registrationForm" (ngSubmit)="submitForm()">
@@ -107,13 +107,13 @@
                     </small>
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label for="idville" class="form-label">Ville <span class="text-danger">*</span></label>
+                    <label for="idville" class="form-label">Région <span class="text-danger">*</span></label>
                     <select formControlName="idville" id="idville" class="form-control">
-                      <option value="" disabled selected>Choisissez une ville</option>
+                      <option value="" disabled selected>Choisissez une région</option>
                       <option *ngFor="let ville of villes" [value]="ville.idville">{{ ville.nom }}</option>
                     </select>
                     <small *ngIf="registrationForm.get('idville')?.errors && registrationForm.get('idville')?.touched" class="text-danger">
-                      <small *ngIf="registrationForm.get('idville')?.hasError('required')">Le champ ville est obligatoire.</small>
+                      <small *ngIf="registrationForm.get('idville')?.hasError('required')">Le champ région est obligatoire.</small>
                     </small>
                   </div>
                   <div class="col-md-6 mb-3">
@@ -167,13 +167,22 @@
                               <span *ngIf="question.questionobligatoire" class="text-danger">*</span>
                             </label>
                             <ng-container [ngSwitch]="question.typequestion">
-                              <input *ngSwitchCase="'file'"
-                                type="file"
-                                class="form-control"
-                                accept=".pdf"
-                                (change)="onFileSelected($event, question.idquestion, responseIdx, category.id)"
-                                [attr.name]="generateControlName(question.idquestion, responseIdx, category.id)"
-                                [attr.id]="generateControlName(question.idquestion, responseIdx, category.id)" />
+                              <ng-container *ngSwitchCase="'file'">
+                                <div class="mb-3">
+                                  <input
+                                    type="file"
+                                    class="form-control"
+                                    accept=".pdf"
+                                    (change)="onFileSelected($event, question.idquestion, responseIdx, category.id)"
+                                    [attr.name]="generateControlName(question.idquestion, responseIdx, category.id)"
+                                    [attr.id]="generateControlName(question.idquestion, responseIdx, category.id)"
+                                  />
+                                  <small class="form-text text-muted text-sm">
+                                    Format accepté : PDF | Taille maximale : 4 Mo
+                                  </small>
+                                </div>
+                              </ng-container>
+
 
                               <input *ngSwitchCase="'text'"
                                 [formControlName]="generateControlName(question.idquestion, responseIdx, category.id)"
@@ -206,17 +215,31 @@
                         </div>
                       </ng-container>
                       <div class="card mb-4">
-                        <ng-container *ngIf="responseIdx === 0 && category.nombreReponses > 1">
-                          <div class="d-flex justify-content-end">
-                            <button type="button" class="btn btn-success btn-sm me-2" (click)="showMoreResponses(category.id)">
-                              Ajouter réponse
-                            </button>
-                            <button type="button" class="btn btn-danger btn-sm" (click)="hideMoreResponses(category.id)">
-                              Supprimer réponse
-                            </button>
+                        <ng-container *ngIf="category.nombreReponses > 1">
+                          <div class="d-flex flex-column">
+                            <!-- Afficher les réponses -->
+                            <ng-container *ngFor="let response of getVisibleResponses(category.id); let i = index">
+                              <div class="response">
+                                <!-- Contenu de la réponse ici -->
+
+                                <!-- Afficher les boutons Ajouter réponse et Supprimer réponse uniquement sur la dernière réponse visible -->
+                                <ng-container *ngIf="i === getVisibleResponses(category.id).length - 1">
+                                  <div class="d-flex justify-content-end">
+                                    <button *ngIf="canAddResponse(category)" type="button" class="btn btn-success btn-sm me-2" (click)="addResponse(category.id)">
+                                      Ajouter réponse
+                                    </button>
+                                    <button *ngIf="canRemoveResponse(category)" type="button" class="btn btn-danger btn-sm" (click)="removeResponse(category.id)">
+                                      Supprimer réponse
+                                    </button>
+                                  </div>
+                                </ng-container>
+                              </div>
+                            </ng-container>
                           </div>
                         </ng-container>
                       </div>
+
+
 
                     </ng-container>
                   </ng-container>
@@ -238,3 +261,7 @@
     </div>
   </form>
 </div>
+<!-- Bouton Retour en haut de la page -->
+<a class="btn btn-primary position-fixed bottom-0 end-0 m-3" (click)="scrollToTop()">
+  <i class="fas fa-arrow-up"></i>
+</a>

@@ -31,6 +31,10 @@ export class FormulaireDetailsComponent implements OnInit {
     });
   }
 
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   getCategories(formulaires: any[]): any[] {
     const categories = formulaires.map(question => question.categoriequestion);
     const uniqueCategories = [...new Set(categories)];

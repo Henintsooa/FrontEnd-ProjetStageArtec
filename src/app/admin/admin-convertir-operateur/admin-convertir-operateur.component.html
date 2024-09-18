@@ -2,14 +2,14 @@
   <nav aria-label="breadcrumb" class="mb-4">
     <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
       <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
-      <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Convertir Opérateur</li>
+      <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Déclarer Opérateur</li>
     </ol>
-    <h6 class="font-weight-bolder mb-0">Convertir un Opérateur</h6>
+    <h6 class="font-weight-bolder mb-0">Déclarer un Opérateur</h6>
   </nav>
 
   <!-- Lien de retour -->
   <div class="mb-4">
-    <a [routerLink]="['/admin/operateurCibles']" class="btn btn-secondary">
+    <a [routerLink]="['/admin/sensibilisation']" class="btn btn-secondary">
       <i class="fas fa-arrow-left"></i> Retour
     </a>
   </div>
@@ -18,7 +18,7 @@
     <div class="col-md-12">
       <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-          <h6 class="text-white">Étape {{ step }} : {{ step === 1 ? 'Choix de l\'Opérateur Cible' : step === 2 ? 'Choix de l\'Opérateur' : 'Date de Conversion' }}</h6>
+          <h6 class="text-white">Étape {{ step }} : {{ step === 1 ? 'Choix de l\'Opérateur Cible' : step === 2 ? 'Choix de l\'Opérateur' : 'Date de Déclaration' }}</h6>
         </div>
         <div class="card-body">
           <!-- Success and error messages -->
@@ -31,7 +31,7 @@
 
           <!-- Étape 1: Choix de l'opérateur cible -->
           <div *ngIf="step === 1">
-            <h5>Sélectionner l'Opérateur Cible</h5>
+            <h5>Sélectionner l'Opérateur Sensibilisé</h5>
             <div class="list-group">
               <div *ngFor="let operateurcible of operateurscibles" class="list-group-item">
                 <input
@@ -49,7 +49,7 @@
 
           <!-- Étape 2: Choix de l'opérateur à associer -->
           <div *ngIf="step === 2">
-            <h5>Sélectionner l'Opérateur à Associer</h5>
+            <h5>Sélectionner l'Opérateur Déclaré</h5>
             <div class="list-group">
               <div *ngFor="let operateur of operateurs" class="list-group-item">
                 <input
@@ -71,9 +71,9 @@
 
           <!-- Étape 3: Sélection de la date de conversion -->
           <div *ngIf="step === 3">
-            <h5>Choisir la Date de Conversion</h5>
+            <h5>Choisir la Date de Déclaration</h5>
             <div class="form-group">
-              <label for="dateConversion">Date de Conversion</label>
+              <label for="dateConversion">Date de Déclaration</label>
               <input
                 type="datetime-local"
                 id="dateConversion"

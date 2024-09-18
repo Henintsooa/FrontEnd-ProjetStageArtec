@@ -1,0 +1,111 @@
+<section class="header">
+  <div class="page-header align-items-start min-vh-30 pt-3 pb-5 m-3 border-radius-sm" style="background-image: url('../assets/img/curved-images/artecBackground.jpg');">
+    <span class="mask bg-gradient-dark opacity-2"></span>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-5 text-center mx-auto">
+          <h1 class="text-white mb-2 mt-8">Historique</h1>
+          <p class="text-lead text-white">Voici les historiques de vos déclarations</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <div class="container mt-1">
+      <!-- Lien de retour -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Bouton Retour -->
+        <a [routerLink]="['/operateur/accueil']" class="btn btn-secondary">
+          <i class="fas fa-arrow-left"></i> Retour
+        </a>
+
+        <!-- Barre de recherche et filtre -->
+        <div class="d-flex ms-md-auto pe-md-3 align-items-center">
+          <!-- Formulaire de recherche -->
+          <form (ngSubmit)="onSearch()" class="d-flex me-2">
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-search" aria-hidden="true"></i>
+              </span>
+              <input type="text" class="form-control" placeholder="Activité, Année, ..." [(ngModel)]="searchKeyword" name="keyword">
+            </div>
+          </form>
+
+          <!-- Filtre -->
+          <div class="filter-status ms-2">
+            <select id="statusFilter" class="form-select" [(ngModel)]="selectedStatus" (ngModelChange)="onStatusChange()">
+              <option value="all">Filtrer par (Tout)</option> <!-- Option pour afficher toutes les demandes -->
+              <option value="1">Filtrer par (En attente)</option>
+              <option value="2">Filtrer par (Validée)</option>
+              <option value="0">Filtrer par (Refusée)</option>
+              <option value="">Filtrer par (En attente d'information)</option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+
+    <!-- Tableau des demandes -->
+    <div class="col-12 mb-4">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4 class="text-center">Liste des Déclarations</h4>
+        </div>
+
+        <div class="card-body px-0 pt-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Date Demande</th>
+                  <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Régime</th>
+                  <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Activité</th>
+                  <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Durée de Validité</th>
+                  <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let demande of filteredDemandes">
+                  <td class="ps-4 text-sm">
+                    <div class="d-flex px-2 py-1">
+                      <div class="d-flex flex-column justify-content-center">
+                        <a [routerLink]="['/operateur/declarations', demande.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ demande.datedemande | date:'dd/MM/yyyy'  }}</a>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="ps-4 text-sm">
+                    <a [routerLink]="['/operateur/declarations', demande.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ demande.nomregime }}</a>
+                  </td>
+                  <td class="ps-4 text-sm">
+                    <a [routerLink]="['/operateur/declarations', demande.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ demande.nomtypeformulaire }}</a>
+                  </td>
+                  <td class="ps-4 text-sm">
+                    <a [routerLink]="['/operateur/declarations', demande.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ demande.anneevalidite }} ans</a>
+                  </td>
+                  <td class="ps-4 text-sm">
+                    <div
+                      class="btn btn-sm"
+                      [ngClass]="{
+                        'bg-gradient-secondary': demande.status === 1,
+                        'bg-gradient-success': demande.status === 2,
+                        'bg-gradient-warning': demande.status === null
+                      }"
+                      style="margin: auto;"
+                    >
+                      {{ getStatusLabel(demande.status) }}
+                    </div>
+                  </td>
+
+                </tr>
+                <tr *ngIf="filteredDemandes.length === 0">
+                  <td colspan="3" class="text-center text-sm">Aucune demande disponible.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>

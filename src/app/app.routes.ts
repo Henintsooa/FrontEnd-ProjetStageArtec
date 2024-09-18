@@ -18,6 +18,12 @@ import { ClientAccueilComponent } from './client/client-accueil/client-accueil.c
 import { ClientSeDeclarerComponent } from './client/client-seDeclarer/client-seDeclarer.component';
 import { DemandeComponent } from './admin/demande/demande.component';
 import { DemandeDetailsComponent } from './admin/demande-details/demande-details.component';
+import { ClientDemandeDetailsComponent } from './client/demande-details/demande-details.component';
+import { ClientHistoriqueComponent } from './client/client-historique/client-historique.component';
+import { AdminRenouvellementComponent } from './admin/admin-renouvellement/admin-renouvellement.component';
+import { RenouvellementsComponent } from './client/renouvellements/renouvellements.component';
+import { ContactezNousComponent } from './client/contact/contact.component';
+
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch:'full' },
@@ -33,27 +39,33 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: AdminDashboardComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
       { path: 'demandes', component: DemandeComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
-      { path: 'demandeDetails/:iddemande', component: DemandeDetailsComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
-      { path: 'formulaire', component: FormulairesComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+      { path: 'demandes/:iddemande', component: DemandeDetailsComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+      { path: 'formulaires', component: FormulairesComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
       { path: 'formulaires/:idtypeformulaire', component: FormulaireDetailsComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
-      { path: 'nouveauFormulaire', component: NouveauFormulaireComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
-      { path: 'editFormulaire/:id', component: ModifierFormulaireComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
-      { path: 'operateurCibles', component: AdminOperateurCiblesComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
-      { path: 'nouvelOperateur', component: AdminNouvelOperateurComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
-      { path: 'editOperateurCible/:id', component: AdminModifierOperateurComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
-      { path: 'convertirOperateur', component: AdminConvertirOperateurComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+      { path: 'formulaire', component: NouveauFormulaireComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+      { path: 'formulaire/:id', component: ModifierFormulaireComponent, canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+      { path: 'sensibilisation', component: AdminOperateurCiblesComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+      { path: 'operateur', component: AdminNouvelOperateurComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+      { path: 'operateur/:id', component: AdminModifierOperateurComponent , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+      { path: 'declaration', component: AdminConvertirOperateurComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
+      { path: 'renouvellement', component: AdminRenouvellementComponent  , canActivate: [AuthGuard], data: { expectedRole: 'admin' } },
 
     ]
   },
   {
-    path: 'client',
+    path: 'operateur',
     component: ClientComponent,
     canActivate: [AuthGuard],
     data: { expectedRole: 'user' },
     children: [
       { path: '', redirectTo: 'accueil', pathMatch: 'full' },
       { path: 'accueil', component: ClientAccueilComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' } },
-      { path: 'seDeclarer/:idtypeformulaire', component: ClientSeDeclarerComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' } },
+      { path: 'declarations/:idtypeformulaire/:id?', component: ClientSeDeclarerComponent, canActivate: [AuthGuard], data: { expectedRole: 'user' } },
+      { path: 'declarations/:iddemande', component: ClientDemandeDetailsComponent , canActivate: [AuthGuard], data: { expectedRole: 'user', title: 'demande' } },
+      { path: 'declarations', component: ClientHistoriqueComponent , canActivate: [AuthGuard], data: { expectedRole: 'user' } },
+      { path: 'renouvellements', component: RenouvellementsComponent  , canActivate: [AuthGuard], data: { expectedRole: 'user' } },
+      { path: 'contact', component: ContactezNousComponent  , canActivate: [AuthGuard], data: { expectedRole: 'user' } },
+
 
 
     ]

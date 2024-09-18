@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { DemandeService } from '../../services/demande.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 
@@ -60,6 +60,7 @@ export class DemandeDetailsComponent implements OnInit {
     private demandeService: DemandeService,
     private route: ActivatedRoute,
     private fb: FormBuilder,
+    private location: Location
   ) {
     this.isCollapsed = this.groupByCategory(this.details).map(() => true);
     this.form = this.fb.group({
@@ -68,7 +69,13 @@ export class DemandeDetailsComponent implements OnInit {
     });
   }
 
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
+  goBack(): void {
+    this.location.back();
+  }
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.iddemande = +params.get('iddemande')!;

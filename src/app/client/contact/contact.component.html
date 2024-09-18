@@ -1,0 +1,115 @@
+<section class="header">
+  <div class="page-header align-items-start min-vh-30 pt-3 pb-5 m-3 border-radius-sm" style="background-image: url('../assets/img/curved-images/artecBackground.jpg');">
+    <span class="mask bg-gradient-dark opacity-2"></span>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-5 text-center mx-auto">
+          <h1 class="text-white mb-2 mt-8">Contact</h1>
+          <p class="text-lead text-white">Vous pouvez contacter un responsable de l'ARTEC en cas de besoins d'informations concernant les procédures</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container mt-1">
+  <!-- Lien de retour -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Bouton Retour -->
+    <a [routerLink]="['/operateur/accueil']" class="btn btn-secondary">
+      <i class="fas fa-arrow-left"></i> Retour
+    </a>
+  </div>
+
+  <!-- Indicateur de chargement Bootstrap -->
+  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="spinner-border spinner-border-sm" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+
+  <div class="message">
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-warning">
+        {{ errorMessage }}
+    </div>
+  </div>
+
+
+
+  <div class="col-12 mb-4">
+    <form>
+      <div class="card mb-4">
+        <div class="card-header">
+          <h4 class="text-center">Contactez un responsable</h4>
+        </div>
+        <div class="card-body pt-4 p-3">
+          <div class="form-group d-flex justify-content-between">
+            <!-- Nom -->
+            <div class="col-md-6 me-2">
+              <label for="name">Nom :</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                [(ngModel)]="name"
+                name="name"
+                required
+              />
+            </div>
+            <!-- Adresse Email -->
+            <div class="col-md-6 me-3">
+              <label for="email">Email :</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                [(ngModel)]="email"
+                name="email"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="message">Message :</label>
+            <textarea
+              class="form-control"
+              id="message"
+              rows="5"
+              [(ngModel)]="message"
+              name="message"
+              required
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="card mb-4">
+        <div class="card-body d-flex justify-content-end">
+          <a data-bs-toggle="modal" data-bs-target="#confirmationModal" class="btn btn-primary btn-lg w-100 w-md-30">Envoyer</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal de confirmation -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmationModalLabel">Confirmation de l'envoi</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Êtes-vous sûr de vouloir envoyer ce message ? Vous recevrez une réponse par email.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-primary" (click)="submitForm()" data-bs-dismiss="modal">Envoyer</button>
+      </div>
+    </div>
+  </div>
+</div>

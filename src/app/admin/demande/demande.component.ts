@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { VilleService } from '../../services/ville.service';
 
 @Component({
   selector: 'app-demande',
@@ -23,19 +24,45 @@ export class DemandeComponent implements OnInit {
   filteredDemandes: any[] = [];
   searchKeyword: string = '';
 
-  constructor(private demandeService: DemandeService, private route: ActivatedRoute) {}
+  startDate: string = ''; // Ou une autre valeur par défaut
+  endDate: string = ''; // Ou une autre valeur par défaut
+  selectedFormType: string = ''; // Initialisation du type sélectionné
+  selectedCity: string = '';
+
+  regions: any[] = [];
+
+  constructor(private demandeService: DemandeService, private route: ActivatedRoute,private villeService: VilleService) {}
 
   ngOnInit(): void {
     this.loadDemandes();
+    this.loadVilles();
     this.route.paramMap.subscribe(params => {
       this.iddemande = +params.get('iddemande')!;
     });
   }
 
-  loadDemandes(keyword: string = '', statusFilter: string = ''): void {
-    console.log('Params:', { keyword, statusFilter });
+  loadVilles(): void {
+    this.villeService.getVilles().subscribe(
+      (data: any) => {
+        this.regions = Array.isArray(data) ? data : [];
+      },
+      (error) => {
+        console.error('Erreur lors de la récupération des villes:', error);
+      }
+    );
+  }
 
-    this.demandeService.getDemandes(keyword, statusFilter).subscribe(
+  loadDemandes(
+    keyword: string = '',
+    statusFilter: string = '',
+    startDate: string = '',
+    endDate: string = '',
+    formType: string = '',
+    city: string = ''
+  ): void {
+    console.log('Params:', { keyword, statusFilter, startDate, endDate, formType, city });
+
+    this.demandeService.getDemandes(keyword, this.selectedStatus, this.startDate, this.endDate, this.selectedFormType, this.selectedCity).subscribe(
       (data: any) => {
         console.log('Données reçues de l\'API:', data);
         if (Array.isArray(data)) {
@@ -52,15 +79,65 @@ export class DemandeComponent implements OnInit {
   }
 
 
+  applyTris(): void {
+    console.log('Valeurs des filtres avant l\'appel:', {
+      searchKeyword: this.searchKeyword,
+      selectedStatus: this.selectedStatus,
+      startDate: this.startDate,
+      endDate: this.endDate,
+      selectedFormType: this.selectedFormType,
+      selectedCity: this.selectedCity
+    });
+
+    this.closeModalFiltre();
+
+    // Ajoutez une petite temporisation pour vous assurer que le modal est bien fermé
+    setTimeout(() => {
+      console.log('Valeurs des filtres après l\'appel:', {
+        searchKeyword: this.searchKeyword,
+        selectedStatus: this.selectedStatus,
+        startDate: this.startDate,
+        endDate: this.endDate,
+        selectedFormType: this.selectedFormType,
+        selectedCity: this.selectedCity
+      });
+
+      this.loadDemandes(
+        this.searchKeyword,
+        this.selectedStatus,
+        this.startDate,
+        this.endDate,
+        this.selectedFormType,
+        this.selectedCity
+      );
+    }, 300);
+  }
+
+
+
+
+
+  onStatusChange(): void {
+    this.loadDemandes(
+      this.searchKeyword,
+      this.selectedStatus,
+      this.startDate,
+      this.endDate,
+      this.selectedFormType,
+      this.selectedCity
+    );
+  }
+
+
 
   onSearch(): void {
     console.log('Mot-clé de recherche:', this.searchKeyword);
     this.loadDemandes(this.searchKeyword, this.selectedStatus);
   }
 
-  onStatusChange(): void {
-    this.loadDemandes();
-  }
+  // onStatusChange(): void {
+  //   this.loadDemandes();
+  // }
 
   applyFilters(): void {
     if (this.selectedStatus === 'all') {
@@ -250,6 +327,24 @@ export class DemandeComponent implements OnInit {
   }
 
 
+  closeModalFiltre(): void {
+    const modalElement = document.getElementById('filterModal');
+    if (modalElement) {
+        modalElement.setAttribute('aria-hidden', 'true');
+        modalElement.classList.remove('show');
+        modalElement.style.display = 'none';
+
+        // Supprimer l'overlay sombre (backdrop)
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.parentNode?.removeChild(backdrop);
+        }
+
+        // Réactiver le scroll du corps de la page
+        document.body.classList.remove('modal-open');
+        document.body.style.removeProperty('overflow');
+    }
+  }
 
   closeModal(): void {
     const modalElement = document.getElementById('confirmationModal');

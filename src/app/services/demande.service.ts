@@ -10,6 +10,11 @@ export class DemandeService {
 
   constructor(private http: HttpClient) {}
 
+  getOperateur(id: number): Observable<any> {
+
+    return this.http.get<any>(`${this.apiUrl}/operateur/${id}`);
+  }
+
   addDocumentSupplementaire(iddemande: number, formData: FormData): Observable<any> {
     const url = `${this.apiUrl}/addDocumentSupplementaire/${iddemande}`;
     return this.http.post(url, formData);
@@ -53,16 +58,26 @@ export class DemandeService {
   }
 
 
-  getDemandes(keyword: string = '', statusFilter: string = ''): Observable<any> {
-    let params = new HttpParams();
-    if (keyword) {
-      params = params.set('keyword', keyword);
-    }
-    if (statusFilter) {
-      params = params.set('statusFilter', statusFilter);
-    }
-    return this.http.get<any>(`${this.apiUrl}/getDemandes`, { params });
+  getDemandes(
+    keyword: string,
+    statusFilter: string,
+    startDate: string,
+    endDate: string,
+    formType: string,
+    city: string
+  ): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/getDemandes`, {
+      params: {
+        searchKeyword: keyword || '',
+        selectedStatus: statusFilter || '',
+        startDate: startDate || '',
+        endDate: endDate || '',
+        selectedFormType: formType || '',
+        selectedCity: city || ''
+      }
+    });
   }
+
 
   getDemandesById(id: number, keyword: string = '', statusFilter: string = ''): Observable<any> {
     let params = new HttpParams();

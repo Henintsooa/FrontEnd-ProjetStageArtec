@@ -3,7 +3,7 @@
   import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
   import { FormulaireService } from '../../services/formulaire.service';
   import { VilleService } from '../../services/ville.service';
-  import { CommonModule } from '@angular/common';
+  import { CommonModule,Location } from '@angular/common';
   import { StructureJuridiquesService } from '../../services/structureJuridique.service';
   import { DemandeService } from '../../services/demande.service';
   import { jwtDecode } from 'jwt-decode';
@@ -27,8 +27,9 @@
     showAdditionalResponses: { [categoryId: number]: boolean[] } = {};
     successMessage: string | null = null;
     errorMessage: string | null = null;
+    idRenouvellement?: number | null = null;
 
-    constructor(private fb: FormBuilder, private villeService: VilleService,private structureJuridiquesService: StructureJuridiquesService,private demandeService: DemandeService, private router: Router, private route: ActivatedRoute, private formulaireService: FormulaireService,private cdr: ChangeDetectorRef,private zone: NgZone) {
+    constructor(private fb: FormBuilder, private villeService: VilleService,private structureJuridiquesService: StructureJuridiquesService,private demandeService: DemandeService, private router: Router, private route: ActivatedRoute, private formulaireService: FormulaireService,private cdr: ChangeDetectorRef,private zone: NgZone,private location: Location) {
       this.registrationForm = this.fb.group({
         nomoperateur: ['', Validators.required],
         email: ['', [Validators.required, Validators.email]],
@@ -40,6 +41,14 @@
       });
       this.isCollapsed = this.getCategories(this.formulaires).map(() => true);
 
+    }
+
+    scrollToTop(): void {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    goBack(): void {
+      this.location.back();
     }
 
     toggleCollapseStatic() {
@@ -101,6 +110,8 @@
     }
 
     ngOnInit(): void {
+      this.idRenouvellement = Number(this.route.snapshot.paramMap.get('id'));
+      console.log('ID renouvellement:', this.idRenouvellement);
       this.loadVilles();
       this.loadStructuresJuridique();
       this.userId = this.getUserIdFromToken();
@@ -129,6 +140,12 @@
       });
     }
 
+
+    getVisibleResponses(categoryId: number): boolean[] {
+      return this.showAdditionalResponses[categoryId] || [];
+    }
+
+
     showMoreResponses(categoryId: number): void {
       if (this.showAdditionalResponses[categoryId]) {
         const nextIndex = this.showAdditionalResponses[categoryId].findIndex(shown => !shown);
@@ -147,6 +164,55 @@
         this.updateFormValidation();
       }
     }
+
+
+    addResponse(categoryId: number): void {
+      if (!this.showAdditionalResponses[categoryId]) {
+        this.showAdditionalResponses[categoryId] = [];
+      }
+
+      // Trouver le premier index disponible pour ajouter une réponse
+      const nextIndex = this.showAdditionalResponses[categoryId].findIndex(shown => !shown);
+
+      if (nextIndex > -1) {
+        this.showAdditionalResponses[categoryId][nextIndex] = true;
+      } else {
+        // Ajoute une nouvelle réponse si aucune espace disponible
+        this.showAdditionalResponses[categoryId].push(true);
+      }
+
+      this.updateFormValidation();
+    }
+
+
+    removeResponse(categoryId: number): void {
+      if (this.showAdditionalResponses[categoryId] && this.showAdditionalResponses[categoryId].length > 1) {
+        // Trouver le dernier index affiché pour le supprimer
+        const lastIndex = this.showAdditionalResponses[categoryId].lastIndexOf(true);
+
+        if (lastIndex > 0) {
+          this.showAdditionalResponses[categoryId][lastIndex] = false;
+        }
+
+        this.updateFormValidation();
+      }
+    }
+
+
+    canAddResponse(category: { id: string | number; nombreReponses: number; }): boolean {
+      const categoryId = category.id as number;
+      // Vérifie si le nombre de réponses affichées est inférieur au nombre maximum de réponses autorisées
+      return this.showAdditionalResponses[categoryId] && this.showAdditionalResponses[categoryId].filter(shown => shown).length < category.nombreReponses;
+    }
+
+
+    canRemoveResponse(category: { id: string | number; }): boolean {
+      const categoryId = category.id as number;
+      // Vérifie si plus d'une réponse est affichée
+      return this.showAdditionalResponses[categoryId] && this.showAdditionalResponses[categoryId].filter(shown => shown).length > 1;
+    }
+
+
 
 
     // Fonction pour récupérer l'ID utilisateur depuis le token
@@ -212,14 +278,14 @@
     }
 
     updateFormValidation(): void {
-      this.getCategories(this.formulaires).forEach((category, categoryIndex) => {
-        category.questions.forEach((question: { idquestion: string; questionobligatoire: boolean; }, questionIndex: number) => {
+      this.getCategories(this.formulaires).forEach((category) => {
+        category.questions.forEach((question: { idquestion: string; questionobligatoire: boolean; }) => {
           for (let i = 0; i < category.nombreReponses; i++) {
             const controlName = this.generateControlName(question.idquestion, i, category.id);
             const control = this.registrationForm.get(controlName);
 
             if (control) {
-              if (this.showAdditionalResponses[category.id][i] || i === 0) {
+              if (this.showAdditionalResponses[category.id] && (this.showAdditionalResponses[category.id][i] || i === 0)) {
                 control.setValidators(question.questionobligatoire ? Validators.required : null);
               } else {
                 control.clearValidators();
@@ -230,6 +296,8 @@
         });
       });
     }
+
+
 
     submitForm(): void {
       // Mettre à jour la validité des champs en fonction de leur visibilité
@@ -282,6 +350,11 @@
       formData.append('idstructurejuridique', this.registrationForm.get('idstructurejuridique')?.value);
       formData.append('idformulaire', this.formulaires[0].idformulaire.toString());
       formData.append('datedeclaration', new Date().toISOString().split('T')[0]);
+
+      // Vérification que idRenouvellement est bien un nombre entier
+      if (this.idRenouvellement && !isNaN(+this.idRenouvellement) && +this.idRenouvellement !== 0) {
+        formData.append('idrenouvellement', this.idRenouvellement.toString());
+      }
 
       // Créez une variable pour stocker les réponses
       const responses: any[] = [];

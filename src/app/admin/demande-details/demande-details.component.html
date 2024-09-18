@@ -65,13 +65,13 @@
       <!-- Breadcrumb Navigation -->
       <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
         <li class="breadcrumb-item text-sm">
-          <a class="opacity-5 text-dark" href="javascript:;">Pages / Demande de déclaration</a>
+          <a class="opacity-5 text-dark" href="javascript:;">Pages / Demandes</a>
         </li>
         <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Détails</li>
       </ol>
 
       <!-- Bouton d'export PDF -->
-      <button class="btn btn-primary ms-auto" (click)="exportPdf(details[0].iddemande)">
+      <button class="btn btn-primary ms-auto" *ngIf="details[0]" (click)="exportPdf(details[0].iddemande)">
         <i class="fas fa-file-pdf me-2"></i> Télécharger PDF
       </button>
     </div>
@@ -82,16 +82,17 @@
 
   <!-- En-tête avec bouton Retour et actions -->
   <div class="d-flex justify-content-between align-items-start mb-4">
-    <a [routerLink]="['/admin/demandes']" class="btn btn-secondary">
+    <button (click)="goBack()" class="btn btn-secondary">
       <i class="fas fa-arrow-left"></i> Retour
-    </a>
+    </button>
+
     <!-- Afficher les boutons si le statut est 1 -->
-    <div *ngIf="details[0]?.status === 1; else statusLabel" class="d-flex">
+    <div *ngIf="details[0]?.status === 1; else statusLabel" class="d-flex ms-auto">
       <a data-bs-toggle="modal" data-bs-target="#confirmationModal" class="btn btn-success btn-square text-white px-3 mx-2" title="Valider">
         <i class="fas fa-check"></i>
       </a>
       <a href="#" class="btn btn-danger btn-square text-white px-3 mx-2" data-bs-toggle="modal" data-bs-target="#refusModal" title="Refuser">
-        <i class="fas fa-trash"></i>
+        <i class="fas fa-times"></i>
       </a>
       <a data-bs-toggle="modal" data-bs-target="#infoRequestModal" class="btn btn-warning btn-square text-white px-3 mx-2" title="Demander Info">
         <i class="fas fa-envelope"></i>
@@ -104,7 +105,7 @@
         <i class="fas fa-check"></i>
       </a>
       <a href="#" class="btn btn-danger btn-square text-white px-3 mx-1" data-bs-toggle="modal" data-bs-target="#refusModal" title="Refuser">
-        <i class="fas fa-trash"></i>
+        <i class="fas fa-times"></i>
       </a>
       <!-- Le label de statut est rapproché des boutons -->
       <div class="btn btn-xl bg-gradient-secondary ms-2">
@@ -119,7 +120,7 @@
           'bg-gradient-success': details[0].status === 2,
           'bg-gradient-warning': details[0].status === 3
         }"
-      >
+      *ngIf="details[0]" >
       </div>
     </ng-template>
 
@@ -173,22 +174,22 @@
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <h4 class="text-primary mb-3">{{ details[0].nomtypeformulaire }}</h4>
+            <h4 class="text-primary mb-3" *ngIf="details[0]">{{ details[0].nomtypeformulaire }}</h4>
             <p class="text-muted mb-2">
               <i class="fas fa-map-marker-alt me-2"></i>
-              <span class="text-sm">{{ details[0].nomville }}</span>
+              <span class="text-sm" *ngIf="details[0]">{{ details[0].nomville }}</span>
             </p>
             <p class="text-muted mb-2">
               <span class="text-sm font-weight-bold">Opérateur: </span>
-              <span class="text-sm">{{ details[0].nomoperateur }}</span>
+              <span class="text-sm" *ngIf="details[0]">{{ details[0].nomoperateur }}</span>
             </p>
             <p class="text-muted mb-2">
               <span class="text-sm font-weight-bold">Adresse: </span>
-              <span class="text-sm">{{ details[0].adresse }}</span>
+              <span class="text-sm" *ngIf="details[0]">{{ details[0].adresse }}</span>
             </p>
             <p class="text-muted">
               <span class="text-sm font-weight-bold">Date de Demande: </span>
-              <span class="text-sm">{{ details[0].datedemande | date:'dd/MM/yyyy' }}</span>
+              <span class="text-sm" *ngIf="details[0]">{{ details[0].datedemande | date:'dd/MM/yyyy' }}</span>
             </p>
           </div>
 
@@ -198,7 +199,7 @@
             <div class="d-flex flex-column">
               <p class="text-muted">
               <span class="text-sm font-weight-bold">Date de Déclaration: </span>
-              <span class="text-success font-weight-bold ms-xs-2">{{ details[0].datedeclaration | date: 'dd/MM/yyyy' }}</span>
+              <span class="text-success font-weight-bold ms-xs-2" *ngIf="details[0]">{{ details[0].datedeclaration | date: 'dd/MM/yyyy' }}</span>
               </p>
 
               <p class="text-muted" *ngIf="details[0].dateexpiration">
@@ -230,7 +231,7 @@
     <div class="card">
       <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <h6 class="text-white">Renseignements sur l’opérateur</h6>
-        <button type="button" class="btn btn-box-tool btn-sm text-white" (click)="toggleCollapseDoc()">
+        <button type="button" class="btn btn-box-tool btn-sm text-white" (click)="toggleCollapseStatic()">
           <i class="fa" [ngClass]="{'fa-minus': !isCollapsedStatic, 'fa-plus': isCollapsedStatic}"></i>
         </button>
       </div>
@@ -238,31 +239,31 @@
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="nomoperateur" class="form-label">Nom de l'opérateur :</label>
-            <p>{{ details[0].nomoperateur }}</p>
+            <p *ngIf="details[0]">{{ details[0].nomoperateur }}</p>
           </div>
           <div class="col-md-6 mb-3">
             <label for="email" class="form-label">Email de l'opérateur :</label>
-            <p>{{ details[0].email }}</p>
+            <p *ngIf="details[0]">{{ details[0].email }}</p>
           </div>
           <div class="col-md-6 mb-3">
             <label for="adresseoperateur" class="form-label">Adresse :</label>
-            <p>{{ details[0].adresse }}</p>
+            <p *ngIf="details[0]">{{ details[0].adresse }}</p>
           </div>
           <div class="col-md-6 mb-3">
             <label for="idville" class="form-label">Ville :</label>
-            <p>{{ details[0].nomville }}</p>
+            <p *ngIf="details[0]">{{ details[0].nomville }}</p>
           </div>
           <div class="col-md-6 mb-3">
             <label for="telephone" class="form-label">Téléphone :</label>
-            <p>{{ details[0].telephone }}</p>
+            <p *ngIf="details[0]">{{ details[0].telephone }}</p>
           </div>
           <div class="col-md-6 mb-3">
             <label for="telecopie" class="form-label">Télécopie :</label>
-            <p>{{ details[0].telecopie }}</p>
+            <p *ngIf="details[0]">{{ details[0].telecopie }}</p>
           </div>
           <div class="col-md-6 mb-3">
             <label for="idstructurejuridique" class="form-label">Structure Juridique :</label>
-            <p>{{ details[0].nomstructurejuridique }}</p>
+            <p *ngIf="details[0]">{{ details[0].nomstructurejuridique }}</p>
           </div>
         </div>
       </div>
@@ -341,3 +342,7 @@
     </div>
   </div>
 </div>
+<!-- Bouton Retour en haut de la page -->
+<a class="btn btn-primary position-fixed bottom-0 end-0 m-2" (click)="scrollToTop()">
+  <i class="fas fa-arrow-up"></i>
+</a>

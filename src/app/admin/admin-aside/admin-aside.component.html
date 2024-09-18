@@ -1,8 +1,8 @@
-<aside  class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 ps ps--active-y bg-white" id="sidenav-main">
+<aside  class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-sm my-3 fixed-start ms-3 ps ps--active-y bg-white" id="sidenav-main">
 
   <div class="sidenav-header d-flex justify-content-center align-items-center mb-4 pt-4">
     <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0" aria-hidden="true" id="iconSidenav" [ngClass]="{'d-block': isNavExpanded, 'd-none d-xl-none': !isNavExpanded}" (click)="toggleNav()"></i>
-    <a class="navbar-brand m-0" href="" target="_blank">
+    <a class="navbar-brand m-0" [routerLink]="['/admin/dashboard']" >
       <img src="../assets/img/logo_artec.png" class="navbar-brand-img"  alt="main_logo">
     </a>
   </div>
@@ -14,7 +14,7 @@
            [routerLink]="['/admin/dashboard']"
            routerLinkActive="active bg-secondary"
            [routerLinkActiveOptions]="{exact: true}">
-          <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+          <div class="icon icon-shape icon-sm shadow border-radius-sm bg-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="fas fa-chart-bar"
                [ngClass]="{'text-primary': !isActive('/admin/dashboard'), 'text-white': isActive('/admin/dashboard')}">
             </i>
@@ -27,22 +27,22 @@
            [routerLink]="['/admin/demandes']"
            routerLinkActive="active bg-secondary"
            [routerLinkActiveOptions]="{exact: true}">
-          <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+          <div class="icon icon-shape icon-sm shadow border-radius-sm bg-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="fas fa-tasks"
                [ngClass]="{'text-primary': !isActive('/admin/demandes'), 'text-white': isActive('/admin/demandes')}">
             </i>
           </div>
-          <span class="nav-link-text ms-1">Demandes <tr> de déclaration</span>
+          <span class="nav-link-text ms-1">Déclarations</span>
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link"
-           [routerLink]="['/admin/formulaire']"
+           [routerLink]="['/admin/formulaires']"
            routerLinkActive="active bg-secondary"
            [routerLinkActiveOptions]="{exact: true}">
-          <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+          <div class="icon icon-shape icon-sm shadow border-radius-sm bg-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="fas fa-file-alt"
-               [ngClass]="{'text-primary': !isActive('/admin/formulaire'), 'text-white': isActive('/admin/formulaire')}">
+               [ngClass]="{'text-primary': !isActive('/admin/formulaires'), 'text-white': isActive('/admin/formulaires')}">
             </i>
           </div>
           <span class="nav-link-text ms-1">Formulaires</span>
@@ -50,17 +50,30 @@
       </li>
       <li class="nav-item">
         <a class="nav-link"
-           [routerLink]="['/admin/operateurCibles']"
+           [routerLink]="['/admin/sensibilisation']"
            routerLinkActive="active bg-secondary"
            [routerLinkActiveOptions]="{exact: true}">
-          <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+          <div class="icon icon-shape icon-sm shadow border-radius-sm bg-white text-center me-2 d-flex align-items-center justify-content-center">
             <i class="fas fa-bullhorn"
-               [ngClass]="{'text-primary': !isActive('/admin/operateurCibles'), 'text-white': isActive('/admin/operateurCibles')}">
+               [ngClass]="{'text-primary': !isActive('/admin/sensibilisation'), 'text-white': isActive('/admin/sensibilisation')}">
             </i>
           </div>
           <span class="nav-link-text ms-1">Sensibilisation</span>
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link"
+           [routerLink]="['/admin/renouvellement']"
+           routerLinkActive="active bg-secondary"
+           [routerLinkActiveOptions]="{exact: true}">
+          <div class="icon icon-shape icon-sm shadow border-radius-sm bg-white text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="fas fa-file-signature"
+               [ngClass]="{'text-primary': !isActive('/admin/renouvellement'), 'text-white': isActive('/admin/renouvellement')}">
+            </i>
+          </div>
+          <span class="nav-link-text ms-1">Renouvellement</span>
+        </a>
+    </li>
     </ul>
   </div>
 

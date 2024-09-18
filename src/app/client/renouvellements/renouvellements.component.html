@@ -1,0 +1,71 @@
+<section class="header">
+  <div class="page-header align-items-start min-vh-30 pt-3 pb-5 m-3 border-radius-sm" style="background-image: url('../assets/img/curved-images/artecBackground.jpg');">
+    <span class="mask bg-gradient-dark opacity-2"></span>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-5 text-center mx-auto">
+          <h1 class="text-white mb-2 mt-8">Renouvellements</h1>
+          <p class="text-lead text-white">Voici la liste des renouvellements à faire.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container mt-1">
+  <!-- Lien de retour -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <a [routerLink]="['/operateur/accueil']" class="btn btn-secondary">
+      <i class="fas fa-arrow-left"></i> Retour
+    </a>
+  </div>
+
+  <!-- Tableau des renouvellements -->
+  <div *ngIf="renewals.length > 0; else noRenewals" class="col-12 mb-4">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h4 class="text-center">Liste des Renouvellements</h4>
+      </div>
+
+      <div class="card-body px-0 pt-0 pb-2">
+        <div class="table-responsive p-0">
+          <table class="table align-items-center mb-0">
+            <thead>
+              <tr>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Nom du Formulaire</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Date de Déclaration</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">Date d'Expiration</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let renewal of renewals" class="cursor-pointer">
+                <td class="ps-4 text-sm">
+                  <a [routerLink]="['/operateur/declarations', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.nomtypeformulaire }}</a></td>
+                <td class="ps-4 text-sm">
+                  <a [routerLink]="['/operateur/declarations', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.datedeclaration | date:'dd/MM/yyyy' }}</a></td>
+                <td class="ps-4 text-sm">
+                  <a [routerLink]="['/operateur/declarations', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.dateexpiration | date:'dd/MM/yyyy' }}</a></td>
+                  <td class="ps-4 text-sm">
+                    <a [routerLink]="['/operateur/declarations', renewal.idtypeformulaire, renewal.renouvellement_id]"
+                       class="btn btn-sm bg-gradient-warning"
+                       style="margin: auto;">
+                      Renouveler
+                    </a>
+                  </td>
+                </tr>
+
+              <tr *ngIf="renewals.length === 0">
+                <td colspan="3" class="text-center text-sm">Aucun renouvellement à afficher.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noRenewals>
+    <p>Aucun renouvellement à afficher.</p>
+  </ng-template>
+</div>
