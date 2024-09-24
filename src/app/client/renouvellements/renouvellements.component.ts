@@ -19,7 +19,7 @@ export class RenouvellementsComponent {
 
   ngOnInit(): void {
     const userId = this.getUserIdFromToken();
-    console.log('ID de l\'utilisateur:', userId);
+    // console.log('ID de l\'utilisateur:', userId);
     this.loadRenewals(userId);
   }
 
@@ -44,7 +44,7 @@ export class RenouvellementsComponent {
     if (token) {
       try {
         const decodedToken: any = jwtDecode(token);
-        console.log('Token décodé:', decodedToken); // Affichez le contenu décodé
+        // console.log('Token décodé:', decodedToken); // Affichez le contenu décodé
         return decodedToken.sub || null; // Ajustez la clé si nécessaire
       } catch (e) {
         console.error('Erreur lors du décodage du token', e);

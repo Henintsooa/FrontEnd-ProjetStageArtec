@@ -7,6 +7,7 @@
   import { StructureJuridiquesService } from '../../services/structureJuridique.service';
   import { DemandeService } from '../../services/demande.service';
   import { jwtDecode } from 'jwt-decode';
+  import Swal from 'sweetalert2';
 
   @Component({
     selector: 'app-client-seDeclarer',
@@ -111,21 +112,21 @@
 
     ngOnInit(): void {
       this.idRenouvellement = Number(this.route.snapshot.paramMap.get('id'));
-      console.log('ID renouvellement:', this.idRenouvellement);
+      // console.log('ID renouvellement:', this.idRenouvellement);
       this.loadVilles();
       this.loadStructuresJuridique();
       this.userId = this.getUserIdFromToken();
-      console.log('ID utilisateur:', this.userId);
+      // console.log('ID utilisateur:', this.userId);
       const id = Number(this.route.snapshot.paramMap.get('idtypeformulaire'));
       if (id) {
         this.formulaireService.getFormulaireByType(id).subscribe({
           next: (data: any[]) => {
-            console.log('Données récupérées:', data);
+            // console.log('Données récupérées:', data);
             this.formulaires = data;
             this.imgSrc = `http://127.0.0.1:8000/${this.formulaires[0].image}`;
             this.initializeFormControls();
             this.initializeShowAdditionalResponses();
-            console.log(this.imgSrc);
+            // console.log(this.imgSrc);
           },
           error: (error: any) => {
             console.error('Erreur lors de la récupération des formulaires', error);
@@ -221,7 +222,7 @@
       if (token) {
         try {
           const decodedToken: any = jwtDecode(token);
-          console.log('Token décodé:', decodedToken); // Affichez le contenu décodé
+          // console.log('Token décodé:', decodedToken); // Affichez le contenu décodé
           return decodedToken.sub || null; // Ajustez la clé si nécessaire
         } catch (e) {
           console.error('Erreur lors du décodage du token', e);
@@ -237,7 +238,7 @@
           for (let i = 0; i < category.nombreReponses; i++) {
             const controlName = this.generateControlName(question.idquestion, i, category.id);
 
-            console.log('Ajout du contrôle:', controlName);
+            // console.log('Ajout du contrôle:', controlName);
 
             let control = null;
 
@@ -262,11 +263,11 @@
       if (file) {
         this.filesMap[controlName] = file;
         this.registrationForm.get(controlName)?.setValue(file); // Ajoutez cette ligne
-        console.log(`Fichier sélectionné pour ${controlName}:`, file);
+        // console.log(`Fichier sélectionné pour ${controlName}:`, file);
       } else {
         delete this.filesMap[controlName];
         this.registrationForm.get(controlName)?.setValue(null); // Ajoutez cette ligne
-        console.log(`Fichier supprimé pour ${controlName}`);
+        // console.log(`Fichier supprimé pour ${controlName}`);
       }
     }
 
@@ -324,13 +325,24 @@
 
         // Générer un message d'erreur détaillé
         if (invalidFields.length > 0) {
-            this.errorMessage = 'Veuillez remplir correctement les champs suivants : ' + invalidFields.join(', ') + '.';
-        } else {
-            this.errorMessage = 'Veuillez remplir tous les champs obligatoires correctement.';
-        }
+          this.errorMessage = 'Veuillez remplir correctement les champs suivants : ' + invalidFields.join(', ') + '.';
+      } else {
+          this.errorMessage = 'Veuillez remplir tous les champs obligatoires correctement.';
+      }
 
-        this.successMessage = null; // Effacer tout message de succès précédent
-        console.log('Formulaire invalide', this.registrationForm.errors);
+      this.successMessage = null;
+
+      Swal.fire({
+        title: 'Erreur',
+        text: this.errorMessage,
+        icon: 'error',
+        confirmButtonText: 'OK',
+        customClass: {
+          popup: 'modal-content modal-dialog modal-dialog-centered',
+          title: 'modal-title h5',
+          confirmButton: 'btn btn-primary'
+        }
+      });
         return;
     }
 
@@ -395,23 +407,66 @@
           formData.append(`reponses[${index}][nombrereponse]`, response.nombrereponse);
       });
 
-      console.log('Contenu de formData :');
-      formData.forEach((value, key) => {
-          console.log(`${key}:`, value);
-      });
+      // console.log('Contenu de formData :');
+      // formData.forEach((value, key) => {
+      //     console.log(`${key}:`, value);
+      // });
 
       this.demandeService.addDemande(formData).subscribe({
         next: (response) => {
             this.successMessage = response.message || 'Demande créée avec succès';
             this.errorMessage = null; // Effacer les messages d'erreur si la demande est réussie
             this.closeModal();
-            console.log('Réponse du serveur', response);
+            // console.log('Réponse du serveur', response);
             // Rediriger ou effectuer d'autres actions après succès
+            Swal.fire({
+          title: 'Succès',
+          text: response.message || 'Demande validée avec succès',
+          icon: 'success',
+          confirmButtonText: 'OK',
+          customClass: {
+            popup: 'modal-content modal-dialog modal-dialog-centered', // Utiliser les classes Bootstrap 5 pour centrer le contenu
+            title: 'modal-title h5', // Titre
+            confirmButton: 'btn btn-primary'  // Bouton de confirmation
+          },
+          width: '90vw', // Largeur responsive
+          padding: '1.25rem', // Padding pour le contenu
+          buttonsStyling: false, // Désactiver le style par défaut pour utiliser Bootstrap
+          // Ajoutez ici du CSS inline pour le max-width
+          didOpen: () => {
+            const popup = Swal.getPopup();
+            if (popup) {
+              popup.style.maxWidth = '450px'; // Largeur maximale pour les grands écrans
+              popup.style.width = '90vw'; // Largeur responsive pour les petits écrans
+            }
+          }
+        });
         },
         error: (error) => {
             // Afficher les détails de l'erreur, si disponibles
             this.successMessage = null; // Effacer les messages de succès en cas d'erreur
             this.errorMessage = error.error?.error || 'Erreur lors de la création de la demande.';
+            Swal.fire({
+              title: 'Erreur',
+              text: error.error?.error || 'Une erreur est survenue lors de la validation de la demande.',
+              icon: 'error',
+              confirmButtonText: 'OK',
+              customClass: {
+                popup: 'modal-content modal-dialog modal-dialog-centered',
+                title: 'modal-title h5',
+                confirmButton: 'btn btn-primary'
+              },
+              width: '90vw', // Largeur responsive
+              padding: '1.25rem', // Padding pour le contenu
+              buttonsStyling: false,
+              didOpen: () => {
+                const popup = Swal.getPopup();
+                if (popup) {
+                  popup.style.maxWidth = '450px'; // Largeur maximale pour les grands écrans
+                  popup.style.width = '90vw'; // Largeur responsive pour les petits écrans
+                }
+              }
+            });
             this.closeModal();
             console.error('Erreur lors de la création de la demande', error);
         }

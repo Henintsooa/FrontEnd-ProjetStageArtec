@@ -71,19 +71,19 @@
                       <input type="checkbox" (change)="toggleSelectRenewal(renewal)" [checked]="selectedRenewals.includes(renewal)">
                     </td>
                     <td class="ps-4 text-sm">
-                      <a [routerLink]="['/admin/demandeDetails', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.nomoperateur }}</a>
+                      <a [routerLink]="['/admin/demandes', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.nomoperateur }}</a>
                     </td>
                     <td class="ps-2 text-sm">
-                      <a [routerLink]="['/admin/demandeDetails', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.email }}</a>
+                      <a [routerLink]="['/admin/demandes', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.email }}</a>
                     </td>
                     <td class="ps-4 text-sm">
-                      <a [routerLink]="['/admin/demandeDetails', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.nomtypeformulaire }}</a>
+                      <a [routerLink]="['/admin/demandes', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.nomtypeformulaire }}</a>
                     </td>
                     <td class="ps-4 text-sm">
-                      <a [routerLink]="['/admin/demandeDetails', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.dateexpiration | date:'dd/MM/yyyy' }}</a>
+                      <a [routerLink]="['/admin/demandes', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.dateexpiration | date:'dd/MM/yyyy' }}</a>
                     </td>
                     <td class="ps-4 text-sm" *ngIf="renewal.datenotification">
-                      <a [routerLink]="['/admin/demandeDetails', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.datenotification | date:'dd/MM/yyyy HH:mm' }}</a>
+                      <a [routerLink]="['/admin/demandes', renewal.iddemande]" class="text-sm font-weight-bold mb-0 text-wrap">{{ renewal.datenotification | date:'dd/MM/yyyy HH:mm' }}</a>
                     </td>
                     <td class="ps-4 text-sm" *ngIf="!renewal.datenotification">
                       <div class="btn btn bg-gradient-warning" style="margin: auto;">Non renouvelé</div>

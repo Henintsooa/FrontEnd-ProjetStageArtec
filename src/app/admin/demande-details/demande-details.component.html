@@ -27,6 +27,10 @@
         </div>
         <div class="modal-body">
           Êtes-vous sûr de vouloir refuser cette demande ?
+          <div class="mb-3 mt-3">
+            <label for="motifRefus" class="form-label">Motif de refus :</label>
+            <textarea id="motifRefus" class="form-control" [(ngModel)]="motifRefus" rows="3" required></textarea>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
@@ -40,14 +44,40 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="infoRequestModal">Demander des Informations Supplémentaires</h5>
+          <h5 class="modal-title" id="infoRequestModal">Demande d'Informations Supplémentaires</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form (ngSubmit)="sendInfoRequest()">
+          <form [formGroup]="infoRequestForm" (ngSubmit)="sendInfoRequest()">
             <div class="mb-3">
-              <label for="infoRequestMessage" class="form-label">Message :</label>
-              <textarea id="infoRequestMessage" class="form-control" rows="4" [(ngModel)]="infoRequestMessage" name="infoRequestMessage" required></textarea>
+              <label for="infoRequestDocuments" class="form-label">Noms des Documents :</label>
+              <div id="infoRequestDocuments" formArrayName="documents">
+                <!-- Premier champ toujours présent -->
+                <div class="input-group mb-2" *ngFor="let document of documents.controls; let i = index" [formGroupName]="i">
+                  <input
+                    type="text"
+                    class="form-control form-control-sm input-fixed-size"
+                    formControlName="name"
+                    required
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm ms-2"
+                    (click)="removeDocument(i)"
+                    *ngIf="documents.length > 1"
+                  >
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm mt-2"
+                (click)="addDocument()"
+              >
+                Ajouter un document
+              </button>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
@@ -61,14 +91,15 @@
 
   <!-- Navigation et titre -->
   <nav aria-label="breadcrumb" class="mb-4">
-    <div class="d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-start justify-content-between">
       <!-- Breadcrumb Navigation -->
-      <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0">
-        <li class="breadcrumb-item text-sm">
-          <a class="opacity-5 text-dark" href="javascript:;">Pages / Demandes</a>
-        </li>
-        <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Détails</li>
-      </ol>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+          <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages / Demandes</a></li>
+          <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Détails</li>
+        </ol>
+        <h6 class="font-weight-bolder mb-0">Détails de la déclaration</h6>
+      </nav>
 
       <!-- Bouton d'export PDF -->
       <button class="btn btn-primary ms-auto" *ngIf="details[0]" (click)="exportPdf(details[0].iddemande)">
@@ -76,7 +107,6 @@
       </button>
     </div>
 
-    <h6 class="font-weight-bolder mb-0">Détails de la déclaration</h6>
   </nav>
 
 
@@ -107,8 +137,7 @@
       <a href="#" class="btn btn-danger btn-square text-white px-3 mx-1" data-bs-toggle="modal" data-bs-target="#refusModal" title="Refuser">
         <i class="fas fa-times"></i>
       </a>
-      <!-- Le label de statut est rapproché des boutons -->
-      <div class="btn btn-xl bg-gradient-secondary ms-2">
+      <div *ngIf="details && details.length > 0" class="btn btn-xl bg-gradient-warning ms-2">
         {{ getStatusLabel(details[0].status) }}
       </div>
     </div>
@@ -138,34 +167,26 @@
         {{ errorMessage }}
       </div>
     </div>
-    <div class="card mb-3" *ngIf="details[0].status === null">
+
+    <div *ngIf="formVisible && details[0]?.status === null && documents.length > 0" class="card mb-3">
       <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center">
-          <form [formGroup]="form" (ngSubmit)="onSubmitDocumentSupplementaire(iddemande)">
-            <h6>Ajouter Document supplémentaire</h6>
-            <div class="form-group">
-              <label for="nomfichier">Nom du fichier :</label>
-              <input type="text" id="nomfichier" formControlName="nomfichier" class="form-control">
-              <div *ngIf="form.get('nomfichier')?.invalid && form.get('nomfichier')?.touched" class="text-danger text-sm">
-                Le nom du fichier est obligatoire.
+        <h6 class="card-title">Documents supplémentaires à ajouter :</h6>
+        <form [formGroup]="form" (ngSubmit)="onSubmitDocumentSupplementaire()">
+          <div formArrayName="documents" class="row">
+            <div *ngFor="let document of documents.controls; let i = index" [formGroupName]="i" class="col-md-6 mb-3">
+              <input type="hidden" formControlName="iddocumentsupplementaire" value="iddocumentsupplementaire{{i}}">
+              <div class="form-group">
+                <label for="nomfichier{{i}}">Nom du fichier :</label>
+                <input type="text" id="nomfichier{{i}}" formControlName="nomfichier" class="form-control" readonly>
+              </div>
+              <div class="form-group mt-2">
+                <label for="fichier{{i}}">Fichier :</label>
+                <input type="file" id="fichier{{i}}" (change)="onFileSelected($event, i)" class="form-control" accept=".pdf">
               </div>
             </div>
-
-            <div class="form-group">
-              <label for="fichier">Fichier :</label>
-              <input type="file" id="fichier" (change)="onFileSelected($event)" class="form-control" accept=".pdf">
-              <div *ngIf="form.get('fichier')?.invalid && form.get('fichier')?.touched" class="text-danger text-sm">
-                Le fichier est obligatoire.
-              </div>
-            </div>
-
-            <div *ngIf="errorMessage" class="text-danger">
-              {{ errorMessage }}
-            </div>
-
-            <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Soumettre</button>
-          </form>
-        </div>
+          </div>
+          <button type="submit" class="btn btn-primary mt-3" [disabled]="form.invalid">Soumettre</button>
+        </form>
       </div>
     </div>
 
@@ -174,7 +195,9 @@
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <h4 class="text-primary mb-3" *ngIf="details[0]">{{ details[0].nomtypeformulaire }}</h4>
+            <h5 class="text-primary mb-3" *ngIf="details[0]">
+              <span style="word-wrap: break-word;">{{ details[0].nomtypeformulaire }}</span>
+            </h5>
             <p class="text-muted mb-2">
               <i class="fas fa-map-marker-alt me-2"></i>
               <span class="text-sm" *ngIf="details[0]">{{ details[0].nomville }}</span>
@@ -211,7 +234,7 @@
 
           <!-- Formulaire d'ajout de date de déclaration (affiché si datedeclaration est null) -->
           <ng-template #showForm>
-            <form (ngSubmit)="onSubmitDateDeclaration(details[0].iddemande)" class="ms-auto d-flex" *ngIf="details[0].status === 2 && !details[0].datedeclaration">
+            <form (ngSubmit)="onSubmitDateDeclaration(details[0].iddemande)" class="ms-auto d-flex" *ngIf="details[0]?.status === 2 && !details[0].datedeclaration">
               <div class="form-group me-2">
                 <label for="declarationDate" class="form-label">Ajouter Date de Déclaration</label>
                 <input type="date" id="declarationDate" class="form-control" name="declarationDate" [(ngModel)]="declarationDate" required>
@@ -228,42 +251,44 @@
 
   <!-- Détails de l'opérateur -->
   <div class="mb-4">
-    <div class="card">
-      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-        <h6 class="text-white">Renseignements sur l’opérateur</h6>
-        <button type="button" class="btn btn-box-tool btn-sm text-white" (click)="toggleCollapseStatic()">
-          <i class="fa" [ngClass]="{'fa-minus': !isCollapsedStatic, 'fa-plus': isCollapsedStatic}"></i>
-        </button>
-      </div>
-      <div [ngClass]="{'collapse': isCollapsedStatic}" class="card-body">
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label for="nomoperateur" class="form-label">Nom de l'opérateur :</label>
-            <p *ngIf="details[0]">{{ details[0].nomoperateur }}</p>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="email" class="form-label">Email de l'opérateur :</label>
-            <p *ngIf="details[0]">{{ details[0].email }}</p>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="adresseoperateur" class="form-label">Adresse :</label>
-            <p *ngIf="details[0]">{{ details[0].adresse }}</p>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="idville" class="form-label">Ville :</label>
-            <p *ngIf="details[0]">{{ details[0].nomville }}</p>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="telephone" class="form-label">Téléphone :</label>
-            <p *ngIf="details[0]">{{ details[0].telephone }}</p>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="telecopie" class="form-label">Télécopie :</label>
-            <p *ngIf="details[0]">{{ details[0].telecopie }}</p>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="idstructurejuridique" class="form-label">Structure Juridique :</label>
-            <p *ngIf="details[0]">{{ details[0].nomstructurejuridique }}</p>
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h6 class="text-white">Renseignements sur l’opérateur</h6>
+          <button type="button" class="btn btn-box-tool btn-sm text-white" (click)="toggleCollapseStatic()">
+            <i class="fa" [ngClass]="{'fa-minus': !isCollapsedStatic, 'fa-plus': isCollapsedStatic}"></i>
+          </button>
+        </div>
+        <div [ngClass]="{'collapse': isCollapsedStatic}" class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="nomoperateur" class="form-label">Nom de l'opérateur :</label>
+              <p *ngIf="details[0]">{{ details[0].nomoperateur }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="email" class="form-label">Email de l'opérateur :</label>
+              <p *ngIf="details[0]">{{ details[0].email }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="adresseoperateur" class="form-label">Adresse :</label>
+              <p *ngIf="details[0]">{{ details[0].adresse }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="idville" class="form-label">Ville :</label>
+              <p *ngIf="details[0]">{{ details[0].nomville }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="telephone" class="form-label">Téléphone :</label>
+              <p *ngIf="details[0]">{{ details[0].telephone }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="telecopie" class="form-label">Télécopie :</label>
+              <p *ngIf="details[0]">{{ details[0].telecopie }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="idstructurejuridique" class="form-label">Structure Juridique :</label>
+              <p *ngIf="details[0]">{{ details[0].nomstructurejuridique }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -276,45 +301,72 @@
       <ng-container *ngFor="let category of categories; let idx = index;">
         <div class="card mb-4">
           <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h6 class="text-white">{{ category.name }}</h6>
-            <button type="button" class="btn btn-box-tool btn-sm text-white"
-                (click)="toggleCollapse(idx)" [attr.aria-expanded]="!isCollapsed[idx]">
-                <i class="fa" [ngClass]="{'fa-minus': !isCollapsed[idx], 'fa-plus': isCollapsed[idx]}"></i>
+            <h6 class="text-white" style="word-wrap: break-word; white-space: normal;">{{ category.name }}</h6>
+            <button type="button" class="btn btn-box-tool btn-sm text-white" (click)="toggleCollapse(idx)" [attr.aria-expanded]="!isCollapsed[idx]">
+              <i class="fa" [ngClass]="{'fa-minus': !isCollapsed[idx], 'fa-plus': isCollapsed[idx]}"></i>
             </button>
           </div>
           <div class="card-body" *ngIf="!isCollapsed[idx]">
-            <div class="row">
-              <ng-container *ngFor="let detail of category.questions">
-                <div class="col-md-6 mb-3">
-                  <div class="form-group">
-                    <label [for]="detail.textquestion">{{ detail.textquestion }} :</label>
-                    <ng-container [ngSwitch]="detail.typequestion">
-                      <ng-container *ngSwitchCase="'text'">
-                        <p *ngIf="detail.textereponse">
-                          {{ detail.textereponse }}
-                        </p>
-                      </ng-container>
-                      <ng-container *ngSwitchCase="'number'">
-                        <p *ngIf="detail.nombrereponse">
-                          {{ detail.nombrereponse }}
-                        </p>
-                      </ng-container>
-                      <ng-container *ngSwitchCase="'file'">
-                        <p *ngIf="detail.filereponse">
-                          <a [href]="'http://127.0.0.1:8000/' + detail.filereponse" target="_blank">{{ detail.filereponse }}</a>
-                        </p>
-                      </ng-container>
-                      <ng-container *ngSwitchDefault>
-                        <p>Aucune réponse disponible</p>
-                      </ng-container>
-                    </ng-container>
+            <div *ngIf="category.id === 41 || category.id === 42" class="table-responsive">
+              <table class="table table-striped table-hover table-bordered">
+                <thead class="thead-light">
+                  <tr>
+                    <th *ngFor="let question of getUniqueQuestions(category.questions)"> <label for="{{ question.textquestion }}">{{ question.textquestion }}</label></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let row of getResponsesByQuestion(category.questions)">
+                    <tr>
+                      <td *ngFor="let question of getUniqueQuestions(category.questions)" class="p-4">
+                        <ng-container *ngIf="row[question.textquestion] as response">
+                          <ng-container [ngSwitch]="response.typequestion">
+                            <ng-container *ngSwitchCase="'text'">
+                              <span>{{ response.textereponse || 'Aucune réponse disponible' }}</span>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'number'">
+                              <span>{{ response.nombrereponse || 'Aucune réponse disponible' }}</span>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'file'">
+                              <a *ngIf="response.filereponse"
+                                 [href]="'http://127.0.0.1:8000/' + response.filereponse"
+                                 target="_blank">{{ response.filereponse }}</a>
+                              <span *ngIf="!response.filereponse">Aucune réponse disponible</span>
+                            </ng-container>
+                            <ng-container *ngSwitchDefault>
+                              <span>Aucune réponse disponible</span>
+                            </ng-container>
+                          </ng-container>
+                        </ng-container>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Autres catégories sous forme de liste -->
+            <div *ngIf="!(category.id === 41 || category.id === 42)">
+              <div class="row">
+                <ng-container *ngFor="let detail of category.questions">
+                  <div class="col-md-6 mb-3">
+                    <div class="form-group">
+                      <label [for]="detail.textquestion">{{ detail.textquestion }} :</label>
+                      <td *ngIf="detail.textereponse">{{ detail.textereponse }}</td>
+                      <td *ngIf="detail.nombrereponse">{{ detail.nombrereponse }}</td>
+                      <td *ngIf="detail.filereponse">
+                        <a [href]="'http://127.0.0.1:8000/' + detail.filereponse" target="_blank">{{ detail.filereponse }}</a>
+                      </td>
+                      <p *ngIf="!detail.textereponse && !detail.nombrereponse && !detail.filereponse">Aucune réponse disponible</p>
+                    </div>
                   </div>
-                </div>
-              </ng-container>
+                </ng-container>
+              </div>
             </div>
           </div>
         </div>
       </ng-container>
+
+
 
       <div class="card mb-4" *ngIf="documentssupplementaires.length > 0">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">

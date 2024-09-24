@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -13,4 +13,11 @@ export class ContactService {
   sendContactMessage(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/contact`, data);
   }
+
+  getAdminEmails(): Observable<string[]> {
+    return this.http.get<{ emails: string[] }>(`${this.apiUrl}/emails`).pipe(
+      map((response: { emails: any; }) => response.emails) // Extraction du tableau d'emails
+    );
+  }
+
 }

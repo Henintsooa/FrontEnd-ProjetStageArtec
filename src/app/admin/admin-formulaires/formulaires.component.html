@@ -55,12 +55,12 @@
           </div>
           <div class="card-body px-0 pt-0 pb-2">
             <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0">
+              <table class="table align-items-top mb-0">
                 <thead>
                   <tr>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7" style="width: 30%;">Activité</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width: 50%;">Description</th>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width: 50%;">Dernière modification</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width: 10%;">Régime</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width: 50%;">Activité</th>
+                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2" style="width: 20%;">Dernière modification</th>
                     <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">Actions</th>
                   </tr>
                 </thead>
@@ -69,12 +69,16 @@
                     <td>
                       <div class="d-flex px-2 py-1">
                         <div class="d-flex flex-column justify-content-center">
-                          <a [routerLink]="['/admin/formulaires', formulaire.idtypeformulaire]" class="text-sm font-weight-bold mb-0 text-wrap">{{ formulaire.nomtypeformulaire }}</a>
+                          <a [routerLink]="['/admin/formulaires', formulaire.idtypeformulaire]" class="text-sm font-weight-bold mb-0 text-wrap">{{ formulaire.nomregime }}</a>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <a [routerLink]="['/admin/formulaires', formulaire.idtypeformulaire]" class="text-sm font-weight-bold mb-0 text-wrap">{{ formulaire.descriptiontypeformulaire }}</a>
+                      <div class="d-flex px-2 py-1">
+                        <div class="d-flex flex-column justify-content-center">
+                          <a [routerLink]="['/admin/formulaires', formulaire.idtypeformulaire]" class="text-sm font-weight-bold mb-0 text-wrap">{{ formulaire.nomtypeformulaire }}</a>
+                        </div>
+                      </div>
                     </td>
                     <td>
                       <a [routerLink]="['/admin/formulaires', formulaire.idtypeformulaire]" class="text-sm font-weight-bold mb-0 text-wrap">{{ formulaire.datecreationformulaire | date:'dd/MM/yyyy' }}</a>

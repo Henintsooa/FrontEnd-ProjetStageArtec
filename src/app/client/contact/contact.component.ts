@@ -25,7 +25,7 @@ export class ContactezNousComponent {
 
   ngOnInit(): void {
     this.userId = this.getUserIdFromToken();
-    console.log('ID de l\'utilisateur:', this.userId);
+    // console.log('ID de l\'utilisateur:', this.userId);
   }
 
   submitForm() {
@@ -62,7 +62,7 @@ export class ContactezNousComponent {
     if (token) {
       try {
         const decodedToken: any = jwtDecode(token);
-        console.log('Token décodé:', decodedToken);
+        // console.log('Token décodé:', decodedToken);
         return decodedToken.sub || null;
       } catch (e) {
         console.error('Erreur lors du décodage du token', e);

@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { DemandeService } from '../../services/demande.service';
 import { CommonModule, Location } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
-
+import { ChangeDetectorRef } from '@angular/core';
 
 interface Response {
   iddemande: number;
@@ -27,6 +27,7 @@ interface Response {
   filereponse?: string;
   typequestion: string;
   nomcategoriequestion: string;
+  idcategoriequestion: number;
 
 }
 interface DocumentSupplementaire {
@@ -41,6 +42,8 @@ interface DocumentSupplementaire {
   styleUrls: ['./demande-details.component.css']
 })
 export class DemandeDetailsComponent implements OnInit {
+  motifRefus: string = '';
+
   public details: Response[] = [];
   public categories: any[] = [];
   public iddemande!: number;
@@ -56,16 +59,33 @@ export class DemandeDetailsComponent implements OnInit {
   documentssupplementaires: DocumentSupplementaire[] = [];
   form: FormGroup;
 
+  documentNames: string[] = [''];
+  infoRequestForm: FormGroup;
+
+  documentsNom: any[] = [];
+  formVisible = true; // Variable pour contrôler l'affichage du formulaire
+
+
   constructor(
     private demandeService: DemandeService,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private location: Location
+    private location: Location,
+    private cdRef: ChangeDetectorRef
   ) {
     this.isCollapsed = this.groupByCategory(this.details).map(() => true);
     this.form = this.fb.group({
-      nomfichier: ['', Validators.required], // champ obligatoire
-      fichier: [null, Validators.required]  // champ obligatoire
+      documents: this.fb.array(
+        this.documentsNom.map(doc => this.fb.group({
+          id: [doc.id, Validators.required],
+          nomfichier: [doc.nom, Validators.required],
+          fichier: [null, Validators.required]  // Champ pour le fichier
+        }))
+      )
+    });
+
+    this.infoRequestForm = this.fb.group({
+      documents: this.fb.array([this.createDocument()])
     });
   }
 
@@ -80,40 +100,136 @@ export class DemandeDetailsComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.iddemande = +params.get('iddemande')!;
       this.fetchDetails();
+      this.loadDocuments();
+      this.initForm();
     });
   }
 
-  onFileSelected(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.form.patchValue({
-        fichier: file
+  initForm(): void {
+    if (this.documentsNom && this.documentsNom.length > 0) {
+      const documentsArray = this.documentsNom.map(doc => this.fb.group({
+        // id: [doc.id, Validators.required], // ID de document
+        iddocumentsupplementaire: [doc.iddocumentsupplementaire, Validators.required], // Ajoutez cet ID
+        nomfichier: [doc.nom, Validators.required],
+        fichier: [null, Validators.required]
+      }));
+
+      this.form = this.fb.group({
+        documents: this.fb.array(documentsArray)
       });
-      this.form.get('fichier')?.updateValueAndValidity();
     }
   }
+
+
+  get documents(): FormArray {
+    return this.form.get('documents') as FormArray;
+  }
+
+  addDocument(): void {
+    this.documents.push(this.createDocument());
+  }
+
+  removeDocument(index: number): void {
+    if (this.documents.length > 1) {
+      this.documents.removeAt(index);
+    }
+  }
+
+  loadDocuments(): void {
+    this.demandeService.getDocuments(this.iddemande).subscribe({
+      next: (data) => {
+        this.documentsNom = data;
+
+        this.formVisible = !this.documentsNom.some(doc => doc.filereponse);
+
+        this.initForm();
+        // console.log('Documents nom:', this.documentsNom);
+        this.cdRef.detectChanges();
+
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des documents', err);
+      }
+    });
+  }
+
+
+  onFileSelected(event: any, index: number): void {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      this.documents.at(index).patchValue({ fichier: file });
+      this.documents.at(index).get('fichier')?.updateValueAndValidity();
+      console.log(`Fichier sélectionné pour le document ${index}:`, file);
+    } else {
+      alert('Seuls les fichiers PDF sont autorisés.');
+    }
+  }
+
+
 
   // Méthode de soumission du formulaire
-  onSubmitDocumentSupplementaire(iddemande: number): void {
+  onSubmitDocumentSupplementaire(): void {
     if (this.form.valid) {
-      const formData = new FormData();
-      formData.append('nomfichier', this.form.get('nomfichier')?.value);
-      formData.append('fichier', this.form.get('fichier')?.value);
+        const formData = new FormData();
 
-      this.demandeService.addDocumentSupplementaire(iddemande, formData).subscribe(
-        (response) => {
-          this.successMessage = response.message; // Message de succès renvoyé par le backend
-          this.errorMessage = null; // Réinitialiser l'erreur s'il y en avait
-          console.log('Fichier ajouté avec succès :', response.fileUrl);
-        },
-        (error) => {
-          this.successMessage = null; // Réinitialiser le message de succès
-          this.errorMessage = error.error.message || 'Erreur lors de l\'ajout du fichier.';
-          console.error('Erreur lors de l’ajout du fichier :', error);
-        }
-      );
+        // Parcourir tous les documents du formulaire
+        this.documents.controls.forEach((control, index) => {
+            const file = control.get('fichier')?.value;
+            const idDocumentSupplementaire = control.get('iddocumentsupplementaire')?.value;
+            const name = control.get('nomfichier')?.value;
+
+            if (idDocumentSupplementaire) {
+                formData.append(`documents[${index}][id]`, idDocumentSupplementaire);
+            }
+
+            if (file) {
+                formData.append(`documents[${index}][fichier]`, file, file.name);
+            }
+
+            formData.append(`documents[${index}][nomfichier]`, name);
+        });
+
+        this.demandeService.updateDocumentSupplementaire(formData).subscribe(
+            (response) => {
+                Swal.fire({
+                    title: 'Succès',
+                    text: response.message || 'Documents mis à jour avec succès',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        popup: 'modal-content modal-dialog modal-dialog-centered',
+                        title: 'modal-title h5',
+                        confirmButton: 'btn btn-primary'
+                    },
+                    width: '90vw',
+                    padding: '1.25rem',
+                    buttonsStyling: false,
+                    didOpen: () => {
+                        const popup = Swal.getPopup();
+                        if (popup) {
+                            popup.style.maxWidth = '450px';
+                            popup.style.width = '90vw';
+                        }
+                    }
+                });
+
+                // console.log('Document ajouté avec succès :', response);
+                this.loadDocuments();
+                this.cdRef.detectChanges();
+                this.fetchDetails();
+            },
+            (error) => {
+                this.errorMessage = error.error.message || 'Erreur lors de la mise à jour du document.';
+                console.error('Erreur lors de la mise à jour du document :', error);
+            }
+        );
     }
   }
+
+
+
+
+
 
 
   onSubmitDateDeclaration(iddemande: number) {
@@ -155,7 +271,7 @@ export class DemandeDetailsComponent implements OnInit {
           .replace(/^"|"$/g, '') // Supprimer les guillemets autour de l'URL
           .replace(/\\\//g, '/'); // Remplacer les barres obliques échappées par des barres obliques normales
 
-        console.log('URL nettoyée :', cleanedUrl); // Affichez l'URL nettoyée pour vérification
+        // console.log('URL nettoyée :', cleanedUrl); // Affichez l'URL nettoyée pour vérification
 
         window.open(cleanedUrl, '_blank');
       },
@@ -169,7 +285,7 @@ export class DemandeDetailsComponent implements OnInit {
   fetchDetails(): void {
     this.demandeService.getResponsesByDemande(this.iddemande).subscribe(
       (data: any[]) => {
-        console.log('Données récupérées:', data);
+        // console.log('Données récupérées:', data);
         this.details = data;
         this.documentssupplementaires = [];
 
@@ -190,11 +306,11 @@ export class DemandeDetailsComponent implements OnInit {
             }
           }
         });
-
+        this.cdRef.detectChanges();
         // Enlève les doublons des documents
         this.documentssupplementaires = this.removeDuplicates(this.documentssupplementaires);
 
-        console.log('Documents supplémentaires:', this.documentssupplementaires);
+        // console.log('Documents supplémentaires:', this.documentssupplementaires);
         this.categorizeDetails();  // Organiser les détails par catégorie
       },
       (error) => {
@@ -217,14 +333,19 @@ export class DemandeDetailsComponent implements OnInit {
   }
 
   private groupByCategory(details: Response[]): any[] {
-    const grouped: { [key: string]: { name: string, questions: Response[] } } = {};
+    const grouped: { [key: string]: { id: number, name: string, questions: Response[] } } = {};
+
     details.forEach(detail => {
+      const categoryId = detail.idcategoriequestion; // Récupérer l'ID de la catégorie
       const categoryName = detail.nomcategoriequestion || 'Sans catégorie';
+
       if (!grouped[categoryName]) {
-        grouped[categoryName] = { name: categoryName, questions: [] };
+        grouped[categoryName] = { id: categoryId, name: categoryName, questions: [] };
       }
+
       grouped[categoryName].questions.push(detail);
     });
+
     return Object.values(grouped);
   }
 
@@ -299,7 +420,7 @@ export class DemandeDetailsComponent implements OnInit {
   }
 
   confirmSuppression(): void {
-    this.demandeService.refuserDemande(this.iddemande).subscribe({
+    this.demandeService.refuserDemande(this.iddemande, this.motifRefus).subscribe({
       next: (response) => {
         Swal.fire({
           title: 'Succès',
@@ -311,14 +432,14 @@ export class DemandeDetailsComponent implements OnInit {
             title: 'modal-title h5',
             confirmButton: 'btn btn-primary'
           },
-          width: '90vw', // Largeur responsive
-          padding: '1.25rem', // Padding pour le contenu
+          width: '90vw',
+          padding: '1.25rem',
           buttonsStyling: false,
           didOpen: () => {
             const popup = Swal.getPopup();
             if (popup) {
-              popup.style.maxWidth = '450px'; // Largeur maximale pour les grands écrans
-              popup.style.width = '90vw'; // Largeur responsive pour les petits écrans
+              popup.style.maxWidth = '450px';
+              popup.style.width = '90vw';
             }
           }
         });
@@ -336,14 +457,14 @@ export class DemandeDetailsComponent implements OnInit {
             title: 'modal-title h5',
             confirmButton: 'btn btn-primary'
           },
-          width: '90vw', // Largeur responsive
-          padding: '1.25rem', // Padding pour le contenu
+          width: '90vw',
+          padding: '1.25rem',
           buttonsStyling: false,
           didOpen: () => {
             const popup = Swal.getPopup();
             if (popup) {
-              popup.style.maxWidth = '450px'; // Largeur maximale pour les grands écrans
-              popup.style.width = '90vw'; // Largeur responsive pour les petits écrans
+              popup.style.maxWidth = '450px';
+              popup.style.width = '90vw';
             }
           }
         });
@@ -353,61 +474,72 @@ export class DemandeDetailsComponent implements OnInit {
     });
   }
 
+
+  createDocument(): FormGroup {
+    return this.fb.group({
+      name: ['', Validators.required]
+    });
+  }
+
+
+
   sendInfoRequest(): void {
-    if (this.infoRequestMessage.trim()) {
-      this.demandeService.sendInfoRequest(this.iddemande, this.infoRequestMessage).subscribe({
-        next: (response) => {
-          Swal.fire({
-            title: 'Succès',
-            text: 'Demande d\'information envoyée avec succès.',
-            icon: 'success',
-            confirmButtonText: 'OK',
-            customClass: {
-              popup: 'modal-content modal-dialog modal-dialog-centered',
-              title: 'modal-title h5',
-              confirmButton: 'btn btn-primary'
-            },
-            width: '90vw', // Largeur responsive
-            padding: '1.25rem', // Padding pour le contenu
-            buttonsStyling: false,
-            didOpen: () => {
-              const popup = Swal.getPopup();
-              if (popup) {
-                popup.style.maxWidth = '450px'; // Largeur maximale pour les grands écrans
-                popup.style.width = '90vw'; // Largeur responsive pour les petits écrans
-              }
+    const documentNames = this.infoRequestForm.value.documents.map((doc: any) => doc.name.trim());
+
+    this.demandeService.sendInfoRequest(this.iddemande, documentNames).subscribe({
+      next: (response) => {
+        Swal.fire({
+          title: 'Succès',
+          text: 'Demande d\'information envoyée avec succès.',
+          icon: 'success',
+          confirmButtonText: 'OK',
+          customClass: {
+            popup: 'modal-content modal-dialog modal-dialog-centered',
+            title: 'modal-title h5',
+            confirmButton: 'btn btn-primary'
+          },
+          width: '90vw',
+          padding: '1.25rem',
+          buttonsStyling: false,
+          didOpen: () => {
+            const popup = Swal.getPopup();
+            if (popup) {
+              popup.style.maxWidth = '450px';
+              popup.style.width = '90vw';
             }
-          });
-          this.infoRequestMessage = ''; // Réinitialiser le message
-          this.closeInfoRequestModal();
-        },
-        error: (error) => {
-          Swal.fire({
-            title: 'Erreur',
-            text: 'Une erreur est survenue lors de l\'envoi de la demande d\'information.',
-            icon: 'error',
-            confirmButtonText: 'OK',
-            customClass: {
-              popup: 'modal-content modal-dialog modal-dialog-centered',
-              title: 'modal-title h5',
-              confirmButton: 'btn btn-danger'
-            },
-            width: '90vw', // Largeur responsive
-            padding: '1.25rem', // Padding pour le contenu
-            buttonsStyling: false,
-            didOpen: () => {
-              const popup = Swal.getPopup();
-              if (popup) {
-                popup.style.maxWidth = '450px'; // Largeur maximale pour les grands écrans
-                popup.style.width = '90vw'; // Largeur responsive pour les petits écrans
-              }
+          }
+        });
+        this.infoRequestForm.reset();
+        this.documents.clear();
+        this.addDocument(); // Réinitialise avec un champ
+        this.closeInfoRequestModal();
+      },
+      error: (error) => {
+        Swal.fire({
+          title: 'Erreur',
+          text: 'Une erreur est survenue lors de l\'envoi de la demande d\'information.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+          customClass: {
+            popup: 'modal-content modal-dialog modal-dialog-centered',
+            title: 'modal-title h5',
+            confirmButton: 'btn btn-danger'
+          },
+          width: '90vw',
+          padding: '1.25rem',
+          buttonsStyling: false,
+          didOpen: () => {
+            const popup = Swal.getPopup();
+            if (popup) {
+              popup.style.maxWidth = '450px';
+              popup.style.width = '90vw';
             }
-          });
-          this.closeInfoRequestModal();
-          console.error('Erreur lors de l\'envoi de la demande d\'information:', error);
-        }
-      });
-    }
+          }
+        });
+        this.closeInfoRequestModal();
+        console.error('Erreur lors de l\'envoi de la demande d\'information:', error);
+      }
+    });
   }
 
   closeModal(): void {
@@ -478,5 +610,44 @@ export class DemandeDetailsComponent implements OnInit {
       default:
         return 'En attente d\'information supplémentaire';
     }
+  }
+
+  getUniqueQuestions(questions: any[]): any[] {
+    const uniqueQuestions: any[] = [];
+    const questionTexts = new Set();
+
+    questions.forEach(question => {
+      if (!questionTexts.has(question.textquestion)) {
+        questionTexts.add(question.textquestion);
+        uniqueQuestions.push(question);
+      }
+    });
+
+    return uniqueQuestions;
+  }
+
+  getResponsesByQuestion(questions: any[]): any[] {
+    const responsesByQuestion: { [key: string]: any } = {};
+
+    questions.forEach(question => {
+      if (!responsesByQuestion[question.textquestion]) {
+        responsesByQuestion[question.textquestion] = [];
+      }
+      responsesByQuestion[question.textquestion].push(question);
+    });
+
+    // Transpose the responses to align with unique questions
+    const maxResponses = Math.max(...Object.values(responsesByQuestion).map(arr => arr.length));
+    const rows: { [key: string]: any }[] = [];
+
+    for (let i = 0; i < maxResponses; i++) {
+      const row = {};
+      Object.keys(responsesByQuestion).forEach(question => {
+        (row as { [key: string]: any })[question] = responsesByQuestion[question][i] || { typequestion: 'none' }; // default if no response
+      });
+      rows.push(row);
+    }
+
+    return rows;
   }
 }

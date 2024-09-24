@@ -35,7 +35,7 @@
                       <p class="text-sm font-weight-bold text-primary">{{ regime.nomregime }}</p>
                       <div *ngFor="let formulaire of regime.formulaires">
                         <a (click)="navigateToFormulaire(formulaire.idtypeformulaire)" class="dropdown-item border-radius-md">
-                          <span class="ps-3">{{ formulaire.nomFormulaire }}</span>
+                          <span class="" [ngStyle]="{'white-space': 'pre-wrap'}">{{ formulaire.nomFormulaire }}</span>
                         </a>
                       </div>
                     </div>
@@ -49,7 +49,7 @@
                 <p class="text-sm font-weight-bold text-primary">{{ regime.nomregime }}</p>
                 <div *ngFor="let formulaire of regime.formulaires">
                   <a (click)="navigateToFormulaire(formulaire.idtypeformulaire)" class="dropdown-item border-radius-md">
-                    {{ formulaire.nomFormulaire }}
+                    <span class="" [ngStyle]="{'white-space': 'pre-wrap'}">{{ formulaire.nomFormulaire }}</span>
                   </a>
                 </div>
               </div>

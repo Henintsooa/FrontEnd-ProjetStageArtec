@@ -15,9 +15,12 @@ export class DemandeService {
     return this.http.get<any>(`${this.apiUrl}/operateur/${id}`);
   }
 
-  addDocumentSupplementaire(iddemande: number, formData: FormData): Observable<any> {
-    const url = `${this.apiUrl}/addDocumentSupplementaire/${iddemande}`;
-    return this.http.post(url, formData);
+  getDocumentsById(idDemande: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/documents/${idDemande}`);
+  }
+
+  updateDocumentSupplementaire(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/updateDocumentSupplementaire`, formData);
   }
 
   addDateDeclaration(iddemande: number, dateDeclaration: string): Observable<any> {
@@ -95,11 +98,22 @@ export class DemandeService {
     return this.http.post<any>(`${this.apiUrl}/accepterDemande/${idDemande}`,{});
   }
 
-  refuserDemande (idDemande: number): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/refuserDemande/${idDemande}`,{});
+  refuserDemande(idDemande: number, motifRefus: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/refuserDemande/${idDemande}`, { motif_refus: motifRefus });
+}
+
+
+  sendInfoRequest(iddemande: number, documents: string[]): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/demandes/${iddemande}/info-request`, { documents });
   }
 
-  sendInfoRequest(iddemande: number, message: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/demandes/${iddemande}/info-request`, { message });
+  getDocuments(idDemande: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/documents-complementaires/${idDemande}`);
   }
+
+  getReponsesById(idrenouvellement: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/getReponsesIdRenouvellement/${idrenouvellement}`);
+  }
+
+
 }

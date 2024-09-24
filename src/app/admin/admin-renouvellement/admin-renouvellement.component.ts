@@ -63,7 +63,7 @@ export class AdminRenouvellementComponent {
 
   // Notifie les opérateurs sélectionnés pour les renouvellements
   notifySelectedOperators(event: Event): void {
-    event.preventDefault(); // Empêche le comportement par défaut (si besoin)
+    event.preventDefault();
 
     // Si aucun renouvellement n'est sélectionné, afficher un message d'erreur
     if (this.selectedRenewals.length === 0) {
@@ -73,14 +73,14 @@ export class AdminRenouvellementComponent {
 
     // Préparer les données à envoyer, directement sous la forme souhaitée
     const renewals = this.selectedRenewals.map(renewal => {
-        if (renewal && renewal.idrenouvellement) {
-            return { idrenouvellement: renewal.idrenouvellement };
+        if (renewal && renewal.renouvellement_id) {
+            return { renouvellement_id: renewal.renouvellement_id };
         } else {
-            console.error('idrenouvellement manquant pour un renouvellement:', renewal);
+            console.error('renouvellement_id manquant pour un renouvellement:', renewal);
             return null;
         }
     }).filter(renewal => renewal !== null);
-    console.log("Data to be sent:", { renewals }); // Vérifiez le format ici
+    console.log("Data to be sent:", { renewals });
 
     // Appeler le service pour notifier les opérateurs sélectionnés
     this.renewalService.notifyOperators(renewals).subscribe({

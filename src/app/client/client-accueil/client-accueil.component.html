@@ -1,11 +1,11 @@
 <section class="header">
-  <div class="page-header align-items-start min-vh-30 pt-3 pb-5 m-3 border-radius-sm" style="background-image: url('../assets/img/curved-images/artecBackground.jpg');">
-    <span class="mask bg-gradient-dark opacity-2"></span>
-    <div class="container-fluid">
+  <div class="page-header align-items-start pt-3 m-3 border-radius-sm" style="background-image: url('../assets/img/curved-images/artecBackground.jpg');">
+    <span class="mask bg-gradient-dark opacity-5"></span>
+    <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-5 text-center mx-auto">
-          <h1 class="text-white mb-2 mt-8">Bienvenue!</h1>
-          <p class="text-lead text-white">Voici les sortes de déclarations que vous pouvez faire en tant que opérateur</p>
+            <h1 class="text-white mb-2 mt-8">Accueil</h1>
+            <p class="text-lead text-white">Découvrez les différentes déclarations que vous pouvez effectuer.</p>
         </div>
       </div>
     </div>
@@ -18,23 +18,23 @@
       <div class="row">
         <!-- Afficher les régimes -->
         <div *ngFor="let regime of regimes; let i = index" class="col-md-6 mb-4">
-          <div class="card mb-4">
+          <div class="card h-100 d-flex flex-column mb-4">
             <div
               class="card-header pb-0 p-3"
               [ngClass]="{
                 'bg-primary': i % 2 === 0,
-                'bg-success': i % 2 !== 0
+                'bg-info': i % 2 !== 0
               }"
             >
               <h4 class="text-center text-white">
                 {{ regime.regimeName === 'Libre' ? 'Régime ' + regime.regimeName : regime.regimeName }}
               </h4>
             </div>
-            <div class="card-body p-3">
+            <div class="card-body p-3 d-flex flex-column">
               <div class="row">
                 <!-- Formulaires pour chaque régime, 2 par ligne -->
                 <div *ngFor="let typeFormulaire of regime.formulaires" class="col-xl-6 col-md-6 mb-4">
-                  <div class="card card-blog card-plain d-flex flex-column">
+                  <div class="card card-blog card-plain d-flex flex-column h-100">
                     <div class="position-relative">
                       <a class="d-block shadow-xl border-radius-sm">
                         <span class="mask bg-gradient-primary opacity-2 border-radius-sm"></span>
@@ -42,20 +42,21 @@
                       </a>
                     </div>
                     <div class="card-body d-flex flex-column">
+                      <!-- Contenu principal -->
                       <div class="mb-auto">
                         <a href="javascript:;">
-                          <h5>{{ typeFormulaire.nomformulaire }}</h5>
+                          <h6>{{ typeFormulaire.nomformulaire }}</h6>
                         </a>
                         <p class="mb-4 text-sm">{{ typeFormulaire.descriptiontypeformulaire }}</p>
                       </div>
-                      <div class="d-flex mt-3">
-
+                      <!-- Bouton aligné en bas -->
+                      <div class="d-flex mt-auto">
                         <a [routerLink]="['/operateur/declarations', typeFormulaire.idtypeformulaire,'/0']"
-                        [ngClass]="{
-                          'bg-primary': i % 2 === 0,
-                          'bg-success': i % 2 !== 0
-                        }"
-                        class="btn btn-primary btn-sm w-100 py-3">
+                           [ngClass]="{
+                             'bg-primary': i % 2 === 0,
+                             'bg-info': i % 2 !== 0
+                           }"
+                           class="btn btn-primary btn-sm w-100 py-3">
                           Se déclarer
                         </a>
                       </div>
@@ -66,6 +67,7 @@
             </div>
           </div>
         </div>
+
       </div>
 
     </div>

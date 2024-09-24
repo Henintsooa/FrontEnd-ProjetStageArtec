@@ -23,7 +23,8 @@ export class AdminDashboardComponent implements OnInit {
     operateurs: 0,
     tauxConversion: 0,
     enattente: 0,
-    enattenteinfo: 0
+    enattenteinfo: 0,
+    sansSensibilisation: 0
   };
 
   statistiquesParRegion: any;

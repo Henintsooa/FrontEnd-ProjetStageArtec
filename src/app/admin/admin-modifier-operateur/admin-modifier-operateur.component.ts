@@ -39,6 +39,9 @@ export class AdminModifierOperateurComponent implements OnInit {
     });
   }
 
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
   ngOnInit(): void {
     this.operateurId = +this.route.snapshot.paramMap.get('id')!;
     this.loadVilles();

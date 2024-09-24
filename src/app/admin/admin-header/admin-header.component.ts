@@ -74,7 +74,7 @@ export class AdminHeaderComponent implements OnInit {
           if (notificationType === 'Renouvellement') {
             this.router.navigate(['/admin/renouvellement']);
           } else {
-            this.router.navigate(['/admin/demandeDetails', demandeId]);
+            this.router.navigate(['/admin/demandes', demandeId]);
           }
         },
         error: (err) => console.error('Erreur lors de la mise à jour de la notification', err)

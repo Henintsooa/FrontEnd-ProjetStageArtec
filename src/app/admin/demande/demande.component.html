@@ -28,6 +28,10 @@
         </div>
         <div class="modal-body">
           Êtes-vous sûr de vouloir refuser cette demande ?
+          <div class="mb-3 mt-3">
+            <label for="motifRefus" class="form-label">Motif de refus :</label>
+            <textarea id="motifRefus" class="form-control" [(ngModel)]="motifRefus" rows="3" required></textarea>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
@@ -36,19 +40,46 @@
       </div>
     </div>
   </div>
+
   <!-- Modal de demande d'information -->
   <div class="modal fade" id="infoRequestModal" tabindex="-1" aria-labelledby="infoRequestModal" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="infoRequestModal">Demander des Informations Supplémentaires</h5>
+          <h5 class="modal-title" id="infoRequestModal">Demande d'Informations Supplémentaires</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form (ngSubmit)="sendInfoRequest()">
+          <form [formGroup]="infoRequestForm" (ngSubmit)="sendInfoRequest()">
             <div class="mb-3">
-              <label for="infoRequestMessage" class="form-label">Message :</label>
-              <textarea id="infoRequestMessage" class="form-control" rows="4" [(ngModel)]="infoRequestMessage" name="infoRequestMessage" required></textarea>
+              <label for="infoRequestDocuments" class="form-label">Noms des Documents :</label>
+              <div id="infoRequestDocuments" formArrayName="documents">
+                <!-- Premier champ toujours présent -->
+                <div class="input-group mb-2" *ngFor="let document of documents.controls; let i = index" [formGroupName]="i">
+                  <input
+                    type="text"
+                    class="form-control form-control-sm input-fixed-size"
+                    formControlName="name"
+                    required
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm ms-2"
+                    (click)="removeDocument(i)"
+                    *ngIf="documents.length > 1"
+                  >
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm mt-2"
+                (click)="addDocument()"
+              >
+                Ajouter un document
+              </button>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
@@ -58,12 +89,12 @@
         </div>
       </div>
     </div>
-
-    <!-- Modal pour les filtres de recherche -->
-
-
-
   </div>
+
+
+
+
+
     <div class="mb-4">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
@@ -107,7 +138,7 @@
 
       </div>
 
-      <!-- Modal pour les filtres de recherche (déjà présent dans votre code) -->
+      <!-- Modal pour les filtres de recherche-->
       <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -156,6 +187,7 @@
               </form>
             </div>
             <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="clearFilters()">Effacer</button>
               <button type="button" class="btn btn-primary" (click)="applyTris()">Appliquer</button>
             </div>
           </div>
@@ -193,7 +225,7 @@
                     </div>
 
                     <!-- Première colonne : Typeformulaire, Nomoperateur, et Lieu -->
-                    <div class="col-md-4 d-flex flex-column justify-content-center">
+                    <div class="col-md-3 d-flex flex-column justify-content-center">
                       <span class="mb-2 text-xs">
                           <i class="fas fa-tag me-2"></i>Type:
                       <span
@@ -229,7 +261,7 @@
                     </div>
 
 
-                    <div class="col-md-4 d-flex justify-content-md-end justify-content-start align-items-center">
+                    <div class="col-md-5 d-flex justify-content-md-end justify-content-start align-items-center">
 
                       <ng-container *ngIf="demande.status === 1; else statusLabel">
                         <!-- <a [routerLink]="['/admin/demandes', demande.iddemande]" class="btn btn-link text-primary px-3 mb-0" title="Voir plus">
@@ -254,8 +286,8 @@
                           class="btn btn"
                           [ngClass]="{
                             'bg-gradient-success': demande.status === 2,
-                            'bg-gradient-warning': demande.status === 3,
-                            'bg-gradient-secondary': demande.status === null
+                            'bg-gradient-danger': demande.status === 0,
+                            'bg-gradient-warning': demande.status === null
                           }"
                         >
                           {{ getStatusLabel(demande.status) }}

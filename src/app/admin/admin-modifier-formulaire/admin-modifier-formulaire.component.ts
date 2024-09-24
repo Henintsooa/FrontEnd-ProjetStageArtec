@@ -67,6 +67,10 @@ export class ModifierFormulaireComponent implements OnInit {
 
   }
 
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   loadRegimes(): void {
     this.regimeService.getRegimes().subscribe({
       next: (response: any) => {

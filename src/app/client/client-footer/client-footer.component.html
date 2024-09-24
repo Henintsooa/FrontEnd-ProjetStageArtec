@@ -9,11 +9,17 @@
       <img src="../assets/img/logo_artec_blanc.png" class="navbar-brand-img mb-4"  alt="main_logo" style="width: 150px;">
       </div>
       <div class="col-md-6 mb-3">
-        <h5 class="text-white text-sm">Contact</h5>
+        <a [routerLink]="['/operateur/contact']"><h5 class="text-white text-sm">Contact</h5></a>
         <p class="text-white text-sm mb-2"><i class="fas fa-map-marker-alt me-2"></i>Lot IVL 41 Ter B Andohatapenaka - 101 Antananarivo - MADAGASCAR</p>
         <p class="text-white text-sm mb-2"><i class="fas fa-phone me-2"></i>034 02 421 19 / 033 37 421 19 / 032 07 421 19</p>
-        <p class="text-white text-sm mb-2"><i class="fas fa-envelope me-2"></i><a href="mailto:artec&#64;artec.mg" class="text-white text-sm">  artec&#64;artec.mg</a></p>
+        <p class="text-white text-sm mb-2"><i class="fas fa-envelope me-2"></i>
+          <ng-container *ngFor="let email of adminEmails; let last = last">
+            <a [href]="'mailto:' + email" class="text-white text-sm">{{ email }}</a>
+            <span *ngIf="!last">, </span> <!-- Ajoute une virgule entre les emails -->
+          </ng-container>
+        </p>
       </div>
+
       <div class="col-md-2 mb-3">
         <h5 class="text-white text-sm">Réseaux sociaux</h5>
         <div class="d-flex flex-column">

@@ -29,7 +29,7 @@ export class ClientHistoriqueComponent implements OnInit {
 
   ngOnInit(): void {
     const userId = this.getUserIdFromToken();
-    console.log('ID de l\'utilisateur:', userId);
+    // console.log('ID de l\'utilisateur:', userId);
     if (userId) {
       this.loadDemandes(userId);
     } else {
@@ -38,7 +38,7 @@ export class ClientHistoriqueComponent implements OnInit {
   }
 
   onSearch(): void {
-    console.log('Mot-clé de recherche:', this.searchKeyword);
+    // console.log('Mot-clé de recherche:', this.searchKeyword);
     const userId = this.getUserIdFromToken();
     if (userId) {
       this.loadDemandes(userId, this.searchKeyword, this.selectedStatus);
@@ -57,11 +57,11 @@ export class ClientHistoriqueComponent implements OnInit {
   }
 
   loadDemandes(id: number, keyword: string = '', statusFilter: string = 'all'): void {
-    console.log('Params:', { keyword, statusFilter });
+    // console.log('Params:', { keyword, statusFilter });
 
     this.demandeService.getDemandesById(id, keyword, statusFilter).subscribe(
       (data: any) => {
-        console.log('Données reçues de l\'API:', data);
+        // console.log('Données reçues de l\'API:', data);
         if (Array.isArray(data)) {
           this.demandes = data;
         } else {
@@ -93,7 +93,7 @@ export class ClientHistoriqueComponent implements OnInit {
     if (token) {
       try {
         const decodedToken: any = jwtDecode(token);
-        console.log('Token décodé:', decodedToken); // Affichez le contenu décodé
+        // console.log('Token décodé:', decodedToken); // Affichez le contenu décodé
         return decodedToken.sub || null; // Ajustez la clé si nécessaire
       } catch (e) {
         console.error('Erreur lors du décodage du token', e);

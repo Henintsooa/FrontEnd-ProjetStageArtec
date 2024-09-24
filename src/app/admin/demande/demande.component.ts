@@ -3,20 +3,21 @@ import { Component, OnInit } from '@angular/core';
 import { DemandeService } from '../../services/demande.service';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { VilleService } from '../../services/ville.service';
 
 @Component({
   selector: 'app-demande',
   standalone: true,
-  imports: [CommonModule,RouterModule,FormsModule],
+  imports: [CommonModule,RouterModule,FormsModule,ReactiveFormsModule],
   templateUrl: './demande.component.html',
   styleUrls: ['./demande.component.css']
 })
 export class DemandeComponent implements OnInit {
+  motifRefus: string = '';
   demandes: any[] = [];
-  public iddemande!: number;
+  iddemande!: number;
   successMessage: string | null = null;
   errorMessage: string | null = null;
   infoRequestMessage: string = '';
@@ -37,7 +38,15 @@ export class DemandeComponent implements OnInit {
 
   currentPage: number = 1;
 
-  constructor(private demandeService: DemandeService, private route: ActivatedRoute,private villeService: VilleService) {}
+  documentNames: string[] = [''];
+  infoRequestForm: FormGroup;
+
+  constructor(private fb: FormBuilder,private demandeService: DemandeService, private route: ActivatedRoute,private villeService: VilleService) {
+    this.infoRequestForm = this.fb.group({
+      documents: this.fb.array([this.createDocument()])
+    });
+  }
+
 
   ngOnInit(): void {
     this.loadDemandes();
@@ -46,6 +55,15 @@ export class DemandeComponent implements OnInit {
       this.iddemande = +params.get('iddemande')!;
     });
   }
+
+  clearFilters(): void {
+    this.startDate = '';
+    this.endDate = '';
+    this.selectedFormType = '';
+    this.selectedCity = '';
+    this.searchKeyword = '';
+  }
+
 
   loadVilles(): void {
     this.villeService.getVilles().subscribe(
@@ -242,7 +260,7 @@ export class DemandeComponent implements OnInit {
   }
 
   confirmSuppression(): void {
-    this.demandeService.refuserDemande(this.iddemande).subscribe({
+    this.demandeService.refuserDemande(this.iddemande, this.motifRefus).subscribe({
       next: (response) => {
         Swal.fire({
           title: 'Succès',
@@ -254,14 +272,14 @@ export class DemandeComponent implements OnInit {
             title: 'modal-title h5',
             confirmButton: 'btn btn-primary'
           },
-          width: '90vw', // Largeur responsive
-          padding: '1.25rem', // Padding pour le contenu
+          width: '90vw',
+          padding: '1.25rem',
           buttonsStyling: false,
           didOpen: () => {
             const popup = Swal.getPopup();
             if (popup) {
-              popup.style.maxWidth = '450px'; // Largeur maximale pour les grands écrans
-              popup.style.width = '90vw'; // Largeur responsive pour les petits écrans
+              popup.style.maxWidth = '450px';
+              popup.style.width = '90vw';
             }
           }
         });
@@ -279,14 +297,14 @@ export class DemandeComponent implements OnInit {
             title: 'modal-title h5',
             confirmButton: 'btn btn-primary'
           },
-          width: '90vw', // Largeur responsive
-          padding: '1.25rem', // Padding pour le contenu
+          width: '90vw',
+          padding: '1.25rem',
           buttonsStyling: false,
           didOpen: () => {
             const popup = Swal.getPopup();
             if (popup) {
-              popup.style.maxWidth = '450px'; // Largeur maximale pour les grands écrans
-              popup.style.width = '90vw'; // Largeur responsive pour les petits écrans
+              popup.style.maxWidth = '450px';
+              popup.style.width = '90vw';
             }
           }
         });
@@ -296,61 +314,85 @@ export class DemandeComponent implements OnInit {
     });
   }
 
-  sendInfoRequest(): void {
-    if (this.infoRequestMessage.trim()) {
-      this.demandeService.sendInfoRequest(this.iddemande, this.infoRequestMessage).subscribe({
-        next: (response) => {
-          Swal.fire({
-            title: 'Succès',
-            text: 'Demande d\'information envoyée avec succès.',
-            icon: 'success',
-            confirmButtonText: 'OK',
-            customClass: {
-              popup: 'modal-content modal-dialog modal-dialog-centered',
-              title: 'modal-title h5',
-              confirmButton: 'btn btn-primary'
-            },
-            width: '90vw', // Largeur responsive
-            padding: '1.25rem', // Padding pour le contenu
-            buttonsStyling: false,
-            didOpen: () => {
-              const popup = Swal.getPopup();
-              if (popup) {
-                popup.style.maxWidth = '450px'; // Largeur maximale pour les grands écrans
-                popup.style.width = '90vw'; // Largeur responsive pour les petits écrans
-              }
-            }
-          });
-          this.infoRequestMessage = ''; // Réinitialiser le message
-          this.closeInfoRequestModal();
-        },
-        error: (error) => {
-          Swal.fire({
-            title: 'Erreur',
-            text: 'Une erreur est survenue lors de l\'envoi de la demande d\'information.',
-            icon: 'error',
-            confirmButtonText: 'OK',
-            customClass: {
-              popup: 'modal-content modal-dialog modal-dialog-centered',
-              title: 'modal-title h5',
-              confirmButton: 'btn btn-danger'
-            },
-            width: '90vw', // Largeur responsive
-            padding: '1.25rem', // Padding pour le contenu
-            buttonsStyling: false,
-            didOpen: () => {
-              const popup = Swal.getPopup();
-              if (popup) {
-                popup.style.maxWidth = '450px'; // Largeur maximale pour les grands écrans
-                popup.style.width = '90vw'; // Largeur responsive pour les petits écrans
-              }
-            }
-          });
-          this.closeInfoRequestModal();
-          console.error('Erreur lors de l\'envoi de la demande d\'information:', error);
-        }
-      });
+
+
+  get documents(): FormArray {
+    return this.infoRequestForm.get('documents') as FormArray;
+  }
+
+  createDocument(): FormGroup {
+    return this.fb.group({
+      name: ['', Validators.required]
+    });
+  }
+
+  addDocument(): void {
+    this.documents.push(this.createDocument());
+  }
+
+  removeDocument(index: number): void {
+    if (this.documents.length > 1) {
+      this.documents.removeAt(index);
     }
+  }
+
+  sendInfoRequest(): void {
+    const documentNames = this.infoRequestForm.value.documents.map((doc: any) => doc.name.trim());
+
+    this.demandeService.sendInfoRequest(this.iddemande, documentNames).subscribe({
+      next: (response) => {
+        Swal.fire({
+          title: 'Succès',
+          text: 'Demande d\'information envoyée avec succès.',
+          icon: 'success',
+          confirmButtonText: 'OK',
+          customClass: {
+            popup: 'modal-content modal-dialog modal-dialog-centered',
+            title: 'modal-title h5',
+            confirmButton: 'btn btn-primary'
+          },
+          width: '90vw',
+          padding: '1.25rem',
+          buttonsStyling: false,
+          didOpen: () => {
+            const popup = Swal.getPopup();
+            if (popup) {
+              popup.style.maxWidth = '450px';
+              popup.style.width = '90vw';
+            }
+          }
+        });
+        this.infoRequestForm.reset();
+        this.documents.clear();
+        this.addDocument(); // Réinitialise avec un champ
+        this.closeInfoRequestModal();
+      },
+      error: (error) => {
+        Swal.fire({
+          title: 'Erreur',
+          text: 'Une erreur est survenue lors de l\'envoi de la demande d\'information.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+          customClass: {
+            popup: 'modal-content modal-dialog modal-dialog-centered',
+            title: 'modal-title h5',
+            confirmButton: 'btn btn-danger'
+          },
+          width: '90vw',
+          padding: '1.25rem',
+          buttonsStyling: false,
+          didOpen: () => {
+            const popup = Swal.getPopup();
+            if (popup) {
+              popup.style.maxWidth = '450px';
+              popup.style.width = '90vw';
+            }
+          }
+        });
+        this.closeInfoRequestModal();
+        console.error('Erreur lors de l\'envoi de la demande d\'information:', error);
+      }
+    });
   }
 
 

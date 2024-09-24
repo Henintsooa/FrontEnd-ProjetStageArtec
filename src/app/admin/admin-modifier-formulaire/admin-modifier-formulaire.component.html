@@ -46,9 +46,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="successModalLabel">Catégorie ajoutée</h5>
-          <button type="button" class="btn" aria-label="Close" (click)="closeModal()">
-            <i class="fas fa-times"></i>
-          </button>
+            <i class="fas fa-times" (click)="closeModal()"></i>
         </div>
         <div class="modal-body text-center">
           La catégorie a été ajoutée avec succès !
@@ -56,6 +54,7 @@
       </div>
     </div>
   </div>
+
 
   <div class="row mt-4">
     <div class="col-md-12">
@@ -78,7 +77,7 @@
               </div>
               <div class="col-md-6">
                 <label for="desc" class="form-label">Description<span class="text-danger">*</span></label>
-                <input formControlName="description" id="desc" type="text" class="form-control" placeholder="Description de l'activité" required>
+                <textarea formControlName="description" id="desc" type="text" class="form-control" placeholder="Description de l'activité" required></textarea>
               </div>
             </div>
             <div class="row mb-3">
@@ -149,3 +148,7 @@
     </div>
   </div>
 </div>
+<!-- Bouton Retour en haut de la page -->
+<a class="btn btn-primary position-fixed bottom-0 end-0 m-2" (click)="scrollToTop()">
+  <i class="fas fa-arrow-up"></i>
+</a>

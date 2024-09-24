@@ -39,6 +39,9 @@ export class NouveauFormulaireComponent implements OnInit {
     });
   }
 
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
   ngOnInit(): void {
     this.loadRegimes();
     this.formulaireService.getTypeQuestions().subscribe(data => {
